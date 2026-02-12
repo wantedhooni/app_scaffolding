@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: api-admin-server
+  profiles:
+    default: local
