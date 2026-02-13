@@ -128,3 +128,6 @@ gradle-app.setting
 **/.idea
 .vscode
 **/.vscode
+
+bin/
+**/bin/
