@@ -1,0 +1,21 @@
+services:
+  mariadb:
+    image: mariadb:11.4
+    container_name: generic_web
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: app
+      MARIADB_USER: app
+      MARIADB_PASSWORD: app
+      TZ: Asia/Seoul
+    ports:
+      - "23306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - generic_web:/var/lib/mysql
+
+volumes:
+  generic_web:
