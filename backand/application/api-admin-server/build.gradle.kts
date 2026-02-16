@@ -16,7 +16,7 @@ configurations {
 dependencies {
     implementation(project(":common"))
     implementation(project(":domain:entity"))
-    implementation(project(":security:jwt"))
+    implementation(project(":application:security:jwt"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -34,8 +34,8 @@ dependencies {
     implementation("redis.clients:jedis")
     implementation("io.lettuce:lettuce-core")
 
+    // Spring Doc
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
-
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
