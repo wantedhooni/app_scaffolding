@@ -1,53 +1,58 @@
 package com.revy.domain.admin;
 
-import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.base.BaseEntity;
-import jakarta.persistence.CollectionTable;
+import com.revy.domain.admin.enums.UserStatus;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
-import lombok.ToString;
-import org.springframework.util.Assert;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "admin")
+@Getter
+@NoArgsConstructor
 public class Admin extends BaseEntity {
-    @Column(nullable = false, unique = true)
+    @Column(name="email", unique = true, nullable = false)
     private String email;
 
-    @ToString.Exclude
-    @Column(nullable = false)
+    @Column(name="password", nullable = false)
     private String password;
 
-    @Column(name="last_login_at")
-    private LocalDateTime lastLoginAt;
-
+    @Column(name="status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AdminStatus status = AdminStatus.ACTIVE;
+    private UserStatus status;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "admin_permissions", joinColumns = @JoinColumn(name = "admin_id"))
-    @Column(name = "permission")
-    private Set<String> permissions = new HashSet<>();
+    @Column(name="enabled")
+    private boolean enabled;
 
-    public void addPermission(String permission) {
-        permissions.add(permission);
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "admin_roles",
+            joinColumns = @JoinColumn(name = "admin_id", foreignKey = @ForeignKey(name = "fk_admin_roles_user")),
+            inverseJoinColumns = @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_admin_roles_role")),
+            uniqueConstraints = @UniqueConstraint(name = "uk_user_roles", columnNames = {"admin_id", "role_id"})
+    )
+    private Set<Role> roles = new HashSet<>();
+
+
+    // ---- convenience methods ----
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 
-    public void withdraw(){
-        Assert.isTrue(this.status == AdminStatus.ACTIVE, "ACTIVE 상태여야 합니다.");
-        this.status =  AdminStatus.WITHDRAWN;
-    }
-
-    public void login(){
-        this.lastLoginAt = LocalDateTime.now();
+    public void removeRole(Role role) {
+        this.roles.remove(role);
     }
 }

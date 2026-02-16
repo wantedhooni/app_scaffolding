@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@MappedSuperclass
 @ToString
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
     @Id
