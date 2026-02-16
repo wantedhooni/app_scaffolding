@@ -130,4 +130,4 @@ gradle-app.setting
 **/.vscode
 
 bin/
-**/bin/
+**/bin
