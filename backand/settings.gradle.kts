@@ -4,6 +4,6 @@ include(
     ":common",
     ":domain:entity-base",
     ":domain:entity",
-    ":security:jwt",
+    ":application:security:jwt",
     ":application:api-admin-server"
 )
