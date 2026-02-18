@@ -1,5 +1,7 @@
 package com.revy.api.admin.server.infra.config;
 
+import com.revy.api.admin.server.infra.CustomAccessDeniedHandler;
+import com.revy.api.admin.server.infra.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     public static final String[] PERMIT_ALL_PATTERNS = {
             "/favicon.ico",
             "/v3/api-docs/**",
@@ -47,9 +52,9 @@ public class SecurityConfig {
                         .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
                         // .requestMatchers(AUTHENTICATED_PATTERNS).authenticated()
                         .anyRequest().authenticated())
-//                .exceptionHandling(ex -> ex
-//                        .authenticationEntryPoint(authEntryPoint)
-//                        .accessDeniedHandler(accessDeniedHandler))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
