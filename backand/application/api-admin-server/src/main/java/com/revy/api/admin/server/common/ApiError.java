@@ -1,8 +1,17 @@
 package com.revy.api.admin.server.common;
 
+import java.util.Map;
+
 public record ApiError(
         String code,
         String message,
-        java.util.Map<String, String> fieldErrors
+        Map<String, String> fieldErrors
 ) {
+        public static ApiError of(String code, String message) {
+            return new ApiError(code, message, null);
+        }
+
+        public static ApiError of(String code, String message, Map<String, String> fieldErrors) {
+            return new ApiError(code, message, fieldErrors);
+        }
 }

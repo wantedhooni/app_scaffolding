@@ -16,4 +16,5 @@ public record ApiResponse<T>(
     public static ApiResponse<Void> fail(ApiError error) {
         return new ApiResponse<>(false, null, error);
     }
+
 }
