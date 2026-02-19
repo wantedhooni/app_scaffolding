@@ -21,6 +21,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
         private final JwtProperties jwtProperties;
 
     @Override
+    public String createAccessToken(String userId) {
+        log.info("Creating access token for user {}", userId);
+        return createToken(userId, jwtProperties.accessTokenExpirationMin());
+    }
+
+    @Override
     public String createRefreshToken(String userId) {
         log.info("Creating refresh token for user {}", userId);
         return createToken(userId, jwtProperties.refreshTokenExpirationMin());
