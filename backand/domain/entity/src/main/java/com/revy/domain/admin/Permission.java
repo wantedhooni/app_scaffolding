@@ -29,4 +29,18 @@ public class Permission extends BaseEntity {
     public Permission(String code) {
         this.code = code;
     }
+
+    public static Permission create(String code, String description) {
+        Permission permission = new Permission(code);
+        permission.description = description;
+        return permission;
+    }
+
+    public void changeCode(String code) {
+        this.code = code;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
 }

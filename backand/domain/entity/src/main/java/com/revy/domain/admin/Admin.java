@@ -55,4 +55,29 @@ public class Admin extends BaseEntity {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
+
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public void changeEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public static Admin create(String email, String password, UserStatus status, boolean enabled) {
+        Admin admin = new Admin();
+        admin.email = email;
+        admin.password = password;
+        admin.status = status;
+        admin.enabled = enabled;
+        return admin;
+    }
 }

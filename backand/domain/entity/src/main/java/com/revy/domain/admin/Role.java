@@ -45,6 +45,20 @@ public class Role extends BaseEntity {
         this.name = name;
     }
 
+    public static Role create(String name, String description) {
+        Role role = new Role(name);
+        role.description = description;
+        return role;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
     // ---- convenience methods ----
     public void addPermission(Permission permission) {
         this.permissions.add(permission);

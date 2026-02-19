@@ -5,5 +5,5 @@ import com.revy.domain.admin.Admin;
 
 import java.util.UUID;
 
-public interface UserRepository extends BaseRepository<Admin, UUID> {
+public interface AdminRepository extends BaseRepository<Admin, UUID> {
 }
