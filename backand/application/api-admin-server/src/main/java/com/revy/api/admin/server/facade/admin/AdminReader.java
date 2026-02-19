@@ -1,0 +1,22 @@
+package com.revy.api.admin.server.facade.admin;
+
+import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public interface AdminReader {
+    boolean hasAnySecurityData();
+
+    boolean existsByEmail(String email);
+
+    Optional<AdminReaderDto.RoleRef> getRoleByName(String roleName);
+
+    Optional<AdminReaderDto.AuthAdmin> getAuthAdminByEmail(String email);
+
+    Optional<AdminReaderDto.AuthAdmin> getAuthAdminById(UUID adminId);
+
+    Optional<AdminReaderDto.AdminView> getAdminViewById(UUID adminId);
+
+    AdminReaderDto.AdminPage getAdminViewPage(int page, int size);
+}
