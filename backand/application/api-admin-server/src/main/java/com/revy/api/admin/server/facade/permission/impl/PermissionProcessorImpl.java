@@ -2,7 +2,7 @@ package com.revy.api.admin.server.facade.permission.impl;
 
 import com.revy.api.admin.server.facade.permission.PermissionProcessor;
 import com.revy.api.admin.server.facade.permission.PermissionReader;
-import com.revy.domain.admin.Permission;
+import com.revy.domain.admin.AdminPermission;
 import com.revy.domain.admin.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class PermissionProcessorImpl implements PermissionProcessor {
         if (permissionReader.existsByCode(code)) {
             throw new IllegalArgumentException("이미 사용 중인 권한 코드입니다.");
         }
-        Permission permission = Permission.create(code, description);
+        AdminPermission permission = AdminPermission.create(code, description);
         permissionRepository.save(permission);
         return permission.getId();
     }
@@ -30,8 +30,8 @@ public class PermissionProcessorImpl implements PermissionProcessor {
     @Override
     @Transactional
     public void updatePermission(UUID permissionId, String code, String description) {
-        Permission permission = permissionRepository.findById(permissionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+        AdminPermission permission = permissionRepository.findById(permissionId)
+                                                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
 
         if (code != null && !code.isBlank() && !code.equals(permission.getCode())) {
             if (permissionReader.existsByCode(code)) {

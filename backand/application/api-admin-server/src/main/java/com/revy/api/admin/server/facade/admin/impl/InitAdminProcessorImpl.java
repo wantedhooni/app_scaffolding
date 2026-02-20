@@ -2,8 +2,8 @@ package com.revy.api.admin.server.facade.admin.impl;
 
 import com.revy.api.admin.server.facade.admin.InitAdminProcessor;
 import com.revy.domain.admin.Admin;
-import com.revy.domain.admin.Permission;
-import com.revy.domain.admin.Role;
+import com.revy.domain.admin.AdminPermission;
+import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
@@ -42,11 +42,11 @@ public class InitAdminProcessorImpl implements InitAdminProcessor {
     @Override
     @Transactional
     public void initializeSecurityData() {
-        List<Permission> permissions = permissionRepository.saveAll(
-                DEFAULT_PERMISSION_CODES.stream().map(Permission::new).toList()
+        List<AdminPermission> permissions = permissionRepository.saveAll(
+                DEFAULT_PERMISSION_CODES.stream().map(AdminPermission::new).toList()
         );
 
-        Role adminRole = new Role(DEFAULT_ADMIN_ROLE_NAME);
+        AdminRole adminRole = new AdminRole(DEFAULT_ADMIN_ROLE_NAME);
         permissions.forEach(adminRole::addPermission);
         roleRepository.save(adminRole);
 

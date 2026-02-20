@@ -33,39 +33,17 @@ public abstract class CrudController<CREQ, UREQ, DREQ, RES, DRES> {
         return ResponseEntity.ok(ApiResponse.ok(doGet(id)));
     }
 
-    @GetMapping({"", "/list", "/search"})
-    public ResponseEntity<ApiResponse<PageResponse<RES>>> getPage(
+    @GetMapping({"/search"})
+    public ResponseEntity<ApiResponse<PageResponse<RES>>> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String searchBy,
             @RequestParam(required = false) String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection,
-            @RequestParam(required = false) String from,
-            @RequestParam(required = false) String to,
-            @ModelAttribute QueryParams queryParams,
-            HttpServletRequest request
+            @RequestParam(required = false) String paramQuery
     ) {
-        queryParams.loadFrom(request);
-
-        Map<String, List<String>> extraFilters = new LinkedHashMap<>();
-        for (Map.Entry<String, List<String>> entry : queryParams.values().entrySet()) {
-            if (isStandardParam(entry.getKey())) {
-                continue;
-            }
-            extraFilters.put(entry.getKey(), entry.getValue());
-        }
-
-        CrudSearchCondition condition = new CrudSearchCondition(
-                keyword,
-                searchBy,
-                sortBy,
-                sortDirection.toUpperCase(Locale.ROOT),
-                from,
-                to,
-                extraFilters
-        );
-        return ResponseEntity.ok(ApiResponse.ok(doGetPage(page, size, condition)));
+        return ResponseEntity.ok(ApiResponse.ok(
+                getPage(page, size, sortBy, sortDirection, paramQuery)
+        ));
     }
 
     @PostMapping("/update")
@@ -78,54 +56,14 @@ public abstract class CrudController<CREQ, UREQ, DREQ, RES, DRES> {
         return ResponseEntity.ok(ApiResponse.ok(doDelete(req)));
     }
 
+    protected abstract PageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
+
     protected abstract RES doCreate(CREQ req);
 
     protected abstract RES doGet(UUID id);
 
-    protected abstract PageResponse<RES> doGetPage(int page, int size);
-
-    protected PageResponse<RES> doGetPage(int page, int size, CrudSearchCondition condition) {
-        return doGetPage(page, size);
-    }
 
     protected abstract RES doUpdate(UREQ req);
 
     protected abstract DRES doDelete(DREQ req);
-
-    private boolean isStandardParam(String key) {
-        return "page".equals(key)
-                || "size".equals(key)
-                || "keyword".equals(key)
-                || "searchBy".equals(key)
-                || "sortBy".equals(key)
-                || "sortDirection".equals(key)
-                || "from".equals(key)
-                || "to".equals(key);
-    }
-
-    protected record CrudSearchCondition(
-            String keyword,
-            String searchBy,
-            String sortBy,
-            String sortDirection,
-            String from,
-            String to,
-            Map<String, List<String>> extraFilters
-    ) {
-    }
-
-    public static final class QueryParams {
-        private final MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
-
-        public MultiValueMap<String, String> values() {
-            return values;
-        }
-
-        void loadFrom(HttpServletRequest request) {
-            values.clear();
-            for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-                values.put(entry.getKey(), Arrays.asList(entry.getValue()));
-            }
-        }
-    }
 }

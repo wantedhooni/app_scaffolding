@@ -3,7 +3,7 @@ package com.revy.api.admin.server.facade.role.impl;
 import com.revy.api.admin.server.facade.role.RoleProcessor;
 import com.revy.api.admin.server.facade.role.RoleReader;
 import com.revy.domain.admin.Admin;
-import com.revy.domain.admin.Role;
+import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,27 +25,27 @@ public class RoleProcessorImpl implements RoleProcessor {
         if (roleReader.existsByName(name)) {
             throw new IllegalArgumentException("이미 사용 중인 역할명입니다.");
         }
-        Role role = Role.create(name, description);
-        roleRepository.save(role);
-        return role.getId();
+        AdminRole adminRole = AdminRole.create(name, description);
+        roleRepository.save(adminRole);
+        return adminRole.getId();
     }
 
     @Override
     @Transactional
     public void updateRole(UUID roleId, String name, String description) {
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역할입니다."));
+        AdminRole adminRole = roleRepository.findById(roleId)
+                                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역할입니다."));
 
-        if (name != null && !name.isBlank() && !name.equals(role.getName())) {
+        if (name != null && !name.isBlank() && !name.equals(adminRole.getName())) {
             if (roleReader.existsByName(name)) {
                 throw new IllegalArgumentException("이미 사용 중인 역할명입니다.");
             }
-            role.changeName(name);
+            adminRole.changeName(name);
         }
         if (description != null) {
-            role.changeDescription(description);
+            adminRole.changeDescription(description);
         }
-        roleRepository.save(role);
+        roleRepository.save(adminRole);
     }
 
     @Override
@@ -60,12 +60,12 @@ public class RoleProcessorImpl implements RoleProcessor {
     @Override
     @Transactional
     public void addAdminToRole(UUID roleId, UUID adminId) {
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역할입니다."));
+        AdminRole adminRole = roleRepository.findById(roleId)
+                                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역할입니다."));
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        admin.addRole(role);
+        admin.addRole(adminRole);
         adminRepository.save(admin);
     }
 }

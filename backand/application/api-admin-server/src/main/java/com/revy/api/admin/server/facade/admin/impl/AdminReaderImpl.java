@@ -3,10 +3,10 @@ package com.revy.api.admin.server.facade.admin.impl;
 import com.revy.api.admin.server.facade.admin.AdminReader;
 import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
 import com.revy.domain.admin.Admin;
+import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.QAdmin;
-import com.revy.domain.admin.QPermission;
-import com.revy.domain.admin.QRole;
-import com.revy.domain.admin.Role;
+import com.revy.domain.admin.QAdminPermission;
+import com.revy.domain.admin.QAdminRole;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
 import com.revy.domain.admin.repository.RoleRepository;
@@ -33,8 +33,8 @@ public class AdminReaderImpl implements AdminReader {
     @Override
     public boolean hasAnySecurityData() {
         return adminRepository.exists(QAdmin.admin.id.isNotNull())
-                || roleRepository.exists(QRole.role.id.isNotNull())
-                || permissionRepository.exists(QPermission.permission.id.isNotNull());
+                || roleRepository.exists(QAdminRole.adminRole.id.isNotNull())
+                || permissionRepository.exists(QAdminPermission.adminPermission.id.isNotNull());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AdminReaderImpl implements AdminReader {
 
     @Override
     public Optional<AdminReaderDto.RoleRef> getRoleByName(String roleName) {
-        return roleRepository.findOne(QRole.role.name.eq(roleName))
+        return roleRepository.findOne(QAdminRole.adminRole.name.eq(roleName))
                 .map(role -> new AdminReaderDto.RoleRef(role.getId(), role.getName()));
     }
 
@@ -82,9 +82,9 @@ public class AdminReaderImpl implements AdminReader {
     }
 
     private AdminReaderDto.AuthAdmin toAuthAdmin(Admin admin) {
-        Set<String> roleNames = admin.getRoles()
+        Set<String> roleNames = admin.getAdminRoles()
                 .stream()
-                .map(Role::getName)
+                .map(AdminRole::getName)
                 .collect(Collectors.toSet());
         return new AdminReaderDto.AuthAdmin(
                 admin.getId(),
@@ -97,13 +97,13 @@ public class AdminReaderImpl implements AdminReader {
     }
 
     private AdminReaderDto.AdminView toAdminView(Admin admin) {
-        Set<UUID> roleIds = admin.getRoles()
+        Set<UUID> roleIds = admin.getAdminRoles()
                 .stream()
-                .map(Role::getId)
+                .map(AdminRole::getId)
                 .collect(Collectors.toSet());
-        Set<String> roleNames = admin.getRoles()
+        Set<String> roleNames = admin.getAdminRoles()
                 .stream()
-                .map(Role::getName)
+                .map(AdminRole::getName)
                 .collect(Collectors.toSet());
         return new AdminReaderDto.AdminView(
                 admin.getId(),

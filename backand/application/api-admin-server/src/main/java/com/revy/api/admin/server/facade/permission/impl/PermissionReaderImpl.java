@@ -2,8 +2,8 @@ package com.revy.api.admin.server.facade.permission.impl;
 
 import com.revy.api.admin.server.facade.permission.PermissionReader;
 import com.revy.api.admin.server.facade.permission.dto.PermissionReaderDto;
-import com.revy.domain.admin.Permission;
-import com.revy.domain.admin.QPermission;
+import com.revy.domain.admin.AdminPermission;
+import com.revy.domain.admin.QAdminPermission;
 import com.revy.domain.admin.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,12 +23,12 @@ public class PermissionReaderImpl implements PermissionReader {
 
     @Override
     public boolean existsByCode(String code) {
-        return permissionRepository.exists(QPermission.permission.code.eq(code));
+        return permissionRepository.exists(QAdminPermission.adminPermission.code.eq(code));
     }
 
     @Override
     public Optional<PermissionReaderDto.PermissionView> getPermissionViewById(UUID permissionId) {
-        return permissionRepository.findOne(QPermission.permission.id.eq(permissionId)).map(this::toView);
+        return permissionRepository.findOne(QAdminPermission.adminPermission.id.eq(permissionId)).map(this::toView);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PermissionReaderImpl implements PermissionReader {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(size, 1);
         PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Permission> result = permissionRepository.findAll(QPermission.permission.id.isNotNull(), pageable);
+        Page<AdminPermission> result = permissionRepository.findAll(QAdminPermission.adminPermission.id.isNotNull(), pageable);
         return new PermissionReaderDto.PermissionPage(
                 result.getContent().stream().map(this::toView).toList(),
                 result.getTotalElements(),
@@ -45,7 +45,7 @@ public class PermissionReaderImpl implements PermissionReader {
         );
     }
 
-    private PermissionReaderDto.PermissionView toView(Permission permission) {
+    private PermissionReaderDto.PermissionView toView(AdminPermission permission) {
         return new PermissionReaderDto.PermissionView(
                 permission.getId(),
                 permission.getCode(),

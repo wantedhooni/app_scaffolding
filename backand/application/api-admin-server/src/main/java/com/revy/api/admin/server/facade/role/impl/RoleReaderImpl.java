@@ -3,8 +3,8 @@ package com.revy.api.admin.server.facade.role.impl;
 import com.revy.api.admin.server.facade.role.RoleReader;
 import com.revy.api.admin.server.facade.role.dto.RoleReaderDto;
 import com.revy.domain.admin.Admin;
-import com.revy.domain.admin.QRole;
-import com.revy.domain.admin.Role;
+import com.revy.domain.admin.AdminRole;
+import com.revy.domain.admin.QAdminRole;
 import com.revy.domain.admin.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,12 +25,12 @@ public class RoleReaderImpl implements RoleReader {
 
     @Override
     public boolean existsByName(String name) {
-        return roleRepository.exists(QRole.role.name.eq(name));
+        return roleRepository.exists(QAdminRole.adminRole.name.eq(name));
     }
 
     @Override
     public Optional<RoleReaderDto.RoleView> getRoleViewById(UUID roleId) {
-        return roleRepository.findOne(QRole.role.id.eq(roleId)).map(this::toView);
+        return roleRepository.findOne(QAdminRole.adminRole.id.eq(roleId)).map(this::toView);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class RoleReaderImpl implements RoleReader {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(size, 1);
         PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Role> result = roleRepository.findAll(QRole.role.id.isNotNull(), pageable);
+        Page<AdminRole> result = roleRepository.findAll(QAdminRole.adminRole.id.isNotNull(), pageable);
         return new RoleReaderDto.RolePage(
                 result.getContent().stream().map(this::toView).toList(),
                 result.getTotalElements(),
@@ -47,18 +47,18 @@ public class RoleReaderImpl implements RoleReader {
         );
     }
 
-    private RoleReaderDto.RoleView toView(Role role) {
-        var admins = role.getAdmins().stream()
-                .map(this::toAdminRef)
-                .sorted((left, right) -> left.email().compareToIgnoreCase(right.email()))
-                .collect(Collectors.toList());
+    private RoleReaderDto.RoleView toView(AdminRole adminRole) {
+        var admins = adminRole.getAdmins().stream()
+                              .map(this::toAdminRef)
+                              .sorted((left, right) -> left.email().compareToIgnoreCase(right.email()))
+                              .collect(Collectors.toList());
         return new RoleReaderDto.RoleView(
-                role.getId(),
-                role.getName(),
-                role.getDescription(),
+                adminRole.getId(),
+                adminRole.getName(),
+                adminRole.getDescription(),
                 admins,
-                role.getCreatedAt(),
-                role.getUpdatedAt()
+                adminRole.getCreatedAt(),
+                adminRole.getUpdatedAt()
         );
     }
 

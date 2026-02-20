@@ -6,6 +6,7 @@ import com.revy.api.admin.server.facade.admin.dto.CreateAdminDto;
 import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
 import com.revy.api.admin.server.facade.admin.dto.AdminTokenDto;
 import com.revy.domain.admin.Admin;
+import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.RoleRepository;
@@ -42,8 +43,8 @@ public class AdminProcessorImpl implements AdminProcessor {
 
         AdminReaderDto.RoleRef roleRef = adminReader.getRoleByName(DEFAULT_ADMIN_ROLE_NAME)
                 .orElseGet(() -> {
-                    com.revy.domain.admin.Role savedRole = roleRepository.save(new com.revy.domain.admin.Role(DEFAULT_ADMIN_ROLE_NAME));
-                    return new AdminReaderDto.RoleRef(savedRole.getId(), savedRole.getName());
+                    AdminRole savedAdminRole = roleRepository.save(new AdminRole(DEFAULT_ADMIN_ROLE_NAME));
+                    return new AdminReaderDto.RoleRef(savedAdminRole.getId(), savedAdminRole.getName());
                 });
 
         Admin admin = Admin.create(email, passwordEncoder.encode(rawPassword), AdminStatus.ACTIVE, true);
@@ -119,9 +120,9 @@ public class AdminProcessorImpl implements AdminProcessor {
             Set<UUID> parsedRoleIds = roleIds.stream()
                     .map(UUID::fromString)
                     .collect(Collectors.toSet());
-            Set<UUID> currentRoleIds = admin.getRoles().stream().map(com.revy.domain.admin.Role::getId).collect(Collectors.toSet());
+            Set<UUID> currentRoleIds = admin.getAdminRoles().stream().map(AdminRole::getId).collect(Collectors.toSet());
             if (!currentRoleIds.equals(parsedRoleIds)) {
-                admin.getRoles().clear();
+                admin.getAdminRoles().clear();
                 if (!parsedRoleIds.isEmpty()) {
                     var roles = roleRepository.findAllById(parsedRoleIds);
                     if (roles.size() != parsedRoleIds.size()) {

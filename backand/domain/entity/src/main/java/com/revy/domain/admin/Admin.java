@@ -44,16 +44,16 @@ public class Admin extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_admin_roles_role")),
             uniqueConstraints = @UniqueConstraint(name = "uk_user_roles", columnNames = {"admin_id", "role_id"})
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<AdminRole> adminRoles = new HashSet<>();
 
 
     // ---- convenience methods ----
-    public void addRole(Role role) {
-        this.roles.add(role);
+    public void addRole(AdminRole adminRole) {
+        this.adminRoles.add(adminRole);
     }
 
-    public void removeRole(Role role) {
-        this.roles.remove(role);
+    public void removeRole(AdminRole adminRole) {
+        this.adminRoles.remove(adminRole);
     }
 
     public void changeEmail(String email) {

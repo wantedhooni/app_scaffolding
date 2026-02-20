@@ -17,10 +17,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "admin_role")
 @Getter
 @NoArgsConstructor
-public class Role extends BaseEntity {
+public class AdminRole extends BaseEntity {
 
     // 예: ROLE_ADMIN, ROLE_USER
     @Column(nullable = false, length = 60)
@@ -39,16 +39,16 @@ public class Role extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id", foreignKey = @ForeignKey(name = "fk_role_permissions_permission")),
             uniqueConstraints = @UniqueConstraint(name = "uk_role_permissions", columnNames = {"role_id", "permission_id"})
     )
-    private Set<Permission> permissions = new HashSet<>();
+    private Set<AdminPermission> permissions = new HashSet<>();
 
-    public Role(String name) {
+    public AdminRole(String name) {
         this.name = name;
     }
 
-    public static Role create(String name, String description) {
-        Role role = new Role(name);
-        role.description = description;
-        return role;
+    public static AdminRole create(String name, String description) {
+        AdminRole adminRole = new AdminRole(name);
+        adminRole.description = description;
+        return adminRole;
     }
 
     public void changeName(String name) {
@@ -60,13 +60,13 @@ public class Role extends BaseEntity {
     }
 
     // ---- convenience methods ----
-    public void addPermission(Permission permission) {
+    public void addPermission(AdminPermission permission) {
         this.permissions.add(permission);
-        permission.getRoles().add(this);
+        permission.getAdminRoles().add(this);
     }
 
-    public void removePermission(Permission permission) {
+    public void removePermission(AdminPermission permission) {
         this.permissions.remove(permission);
-        permission.getRoles().remove(this);
+        permission.getAdminRoles().remove(this);
     }
 }

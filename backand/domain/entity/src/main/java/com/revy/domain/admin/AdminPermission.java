@@ -13,10 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "admin_permission")
 @Getter
 @NoArgsConstructor
-public class Permission extends BaseEntity {
+public class AdminPermission extends BaseEntity {
     @Column(nullable = false, length = 80)
     private String code;
 
@@ -24,14 +24,14 @@ public class Permission extends BaseEntity {
     private String description;
 
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
-    private Set<Role> roles = new HashSet<>();
+    private Set<AdminRole> adminRoles = new HashSet<>();
 
-    public Permission(String code) {
+    public AdminPermission(String code) {
         this.code = code;
     }
 
-    public static Permission create(String code, String description) {
-        Permission permission = new Permission(code);
+    public static AdminPermission create(String code, String description) {
+        AdminPermission permission = new AdminPermission(code);
         permission.description = description;
         return permission;
     }
