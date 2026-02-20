@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public class AdminPayload {
@@ -26,7 +27,8 @@ public class AdminPayload {
             String email,
             String password,
             UserStatus status,
-            Boolean enabled
+            Boolean enabled,
+            List<String> roleIds
     ) {
     }
 
@@ -38,7 +40,8 @@ public class AdminPayload {
             String email,
             String password,
             UserStatus status,
-            Boolean enabled
+            Boolean enabled,
+            List<String> roleIds
     ) {
     }
 
@@ -55,6 +58,7 @@ public class AdminPayload {
             String email,
             String status,
             boolean enabled,
+            Set<String> roleIds,
             Set<String> roles,
             LocalDateTime createdAt,
             LocalDateTime updatedAt

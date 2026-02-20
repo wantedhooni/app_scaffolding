@@ -54,7 +54,7 @@ public class AdminApi {
         return ResponseEntity.ok(ApiResponse.ok(
                 adminUseCase.update(
                         UUID.fromString(req.adminId()),
-                        new AdminPayload.UpdateReq(req.email(), req.password(), req.status(), req.enabled())
+                        new AdminPayload.UpdateReq(req.email(), req.password(), req.status(), req.enabled(), req.roleIds())
                 )
         ));
     }
