@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ import java.util.UUID;
 @ToString
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+public class BaseEntity implements Serializable {
     @Id
     @Column(name = "id")
     protected UUID id;

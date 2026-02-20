@@ -1,7 +1,7 @@
 package com.revy.domain.admin;
 
+import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.base.BaseEntity;
-import com.revy.domain.admin.enums.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,7 +32,7 @@ public class Admin extends BaseEntity {
 
     @Column(name="status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private AdminStatus status;
 
     @Column(name="enabled")
     private boolean enabled;
@@ -64,7 +64,7 @@ public class Admin extends BaseEntity {
         this.password = password;
     }
 
-    public void changeStatus(UserStatus status) {
+    public void changeStatus(AdminStatus status) {
         this.status = status;
     }
 
@@ -72,7 +72,7 @@ public class Admin extends BaseEntity {
         this.enabled = enabled;
     }
 
-    public static Admin create(String email, String password, UserStatus status, boolean enabled) {
+    public static Admin create(String email, String password, AdminStatus status, boolean enabled) {
         Admin admin = new Admin();
         admin.email = email;
         admin.password = password;

@@ -1,6 +1,6 @@
 package com.revy.domain.admin.enums;
 
-public enum UserStatus {
+public enum AdminStatus {
     ACTIVE,
     WITHDRAWN
 }
