@@ -97,6 +97,10 @@ public class AdminReaderImpl implements AdminReader {
     }
 
     private AdminReaderDto.AdminView toAdminView(Admin admin) {
+        Set<UUID> roleIds = admin.getRoles()
+                .stream()
+                .map(Role::getId)
+                .collect(Collectors.toSet());
         Set<String> roleNames = admin.getRoles()
                 .stream()
                 .map(Role::getName)
@@ -106,6 +110,7 @@ public class AdminReaderImpl implements AdminReader {
                 admin.getEmail(),
                 admin.getStatus(),
                 admin.isEnabled(),
+                roleIds,
                 roleNames,
                 admin.getCreatedAt(),
                 admin.getUpdatedAt()

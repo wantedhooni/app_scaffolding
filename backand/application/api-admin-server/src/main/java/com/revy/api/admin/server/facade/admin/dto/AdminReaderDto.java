@@ -29,6 +29,7 @@ public class AdminReaderDto {
             String email,
             UserStatus status,
             boolean enabled,
+            Set<UUID> roleIds,
             Set<String> roleNames,
             LocalDateTime createdAt,
             LocalDateTime updatedAt

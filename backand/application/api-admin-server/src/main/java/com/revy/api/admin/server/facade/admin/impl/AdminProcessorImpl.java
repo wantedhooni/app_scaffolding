@@ -16,7 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -91,7 +94,7 @@ public class AdminProcessorImpl implements AdminProcessor {
 
     @Override
     @Transactional
-    public void updateAdmin(UUID adminId, String email, String rawPassword, UserStatus status, Boolean enabled) {
+    public void updateAdmin(UUID adminId, String email, String rawPassword, UserStatus status, Boolean enabled, List<String> roleIds) {
         AdminReaderDto.AuthAdmin current = adminReader.getAuthAdminById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -111,6 +114,22 @@ public class AdminProcessorImpl implements AdminProcessor {
         }
         if (enabled != null) {
             admin.changeEnabled(enabled);
+        }
+        if (roleIds != null) {
+            Set<UUID> parsedRoleIds = roleIds.stream()
+                    .map(UUID::fromString)
+                    .collect(Collectors.toSet());
+            Set<UUID> currentRoleIds = admin.getRoles().stream().map(com.revy.domain.admin.Role::getId).collect(Collectors.toSet());
+            if (!currentRoleIds.equals(parsedRoleIds)) {
+                admin.getRoles().clear();
+                if (!parsedRoleIds.isEmpty()) {
+                    var roles = roleRepository.findAllById(parsedRoleIds);
+                    if (roles.size() != parsedRoleIds.size()) {
+                        throw new IllegalArgumentException("유효하지 않은 역할 ID가 포함되어 있습니다.");
+                    }
+                    roles.forEach(admin::addRole);
+                }
+            }
         }
         adminRepository.save(admin);
     }
