@@ -4,7 +4,7 @@ import com.revy.api.admin.server.facade.admin.InitAdminProcessor;
 import com.revy.domain.admin.Admin;
 import com.revy.domain.admin.Permission;
 import com.revy.domain.admin.Role;
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
 import com.revy.domain.admin.repository.RoleRepository;
@@ -53,7 +53,7 @@ public class InitAdminProcessorImpl implements InitAdminProcessor {
         Admin admin = Admin.create(
                 bootstrapAdminEmail,
                 passwordEncoder.encode(bootstrapAdminPassword),
-                UserStatus.ACTIVE,
+                AdminStatus.ACTIVE,
                 true
         );
         admin.addRole(adminRole);

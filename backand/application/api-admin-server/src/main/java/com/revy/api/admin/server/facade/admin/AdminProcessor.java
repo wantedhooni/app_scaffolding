@@ -2,7 +2,7 @@ package com.revy.api.admin.server.facade.admin;
 
 import com.revy.api.admin.server.facade.admin.dto.CreateAdminDto;
 import com.revy.api.admin.server.facade.admin.dto.AdminTokenDto;
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +14,7 @@ public interface AdminProcessor {
 
     AdminTokenDto.Result reissue(String refreshToken);
 
-    void updateAdmin(UUID adminId, String email, String rawPassword, UserStatus status, Boolean enabled, List<String> roleIds);
+    void updateAdmin(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds);
 
     void deleteAdmin(UUID adminId);
 }

@@ -1,6 +1,6 @@
 package com.revy.api.admin.server.facade.admin.dto;
 
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,7 @@ public class AdminReaderDto {
             UUID id,
             String email,
             String encodedPassword,
-            UserStatus status,
+            AdminStatus status,
             boolean enabled,
             Set<String> roleNames
     ) {
@@ -27,7 +27,7 @@ public class AdminReaderDto {
     public record AdminView(
             UUID id,
             String email,
-            UserStatus status,
+            AdminStatus status,
             boolean enabled,
             Set<UUID> roleIds,
             Set<String> roleNames,

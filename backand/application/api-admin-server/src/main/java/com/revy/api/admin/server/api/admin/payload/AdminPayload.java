@@ -1,6 +1,6 @@
 package com.revy.api.admin.server.api.admin.payload;
 
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +26,7 @@ public class AdminPayload {
             @Email
             String email,
             String password,
-            UserStatus status,
+            AdminStatus status,
             Boolean enabled,
             List<String> roleIds
     ) {
@@ -39,7 +39,7 @@ public class AdminPayload {
             @Email
             String email,
             String password,
-            UserStatus status,
+            AdminStatus status,
             Boolean enabled,
             List<String> roleIds
     ) {

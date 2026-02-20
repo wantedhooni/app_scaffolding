@@ -6,7 +6,7 @@ import com.revy.api.admin.server.facade.admin.dto.CreateAdminDto;
 import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
 import com.revy.api.admin.server.facade.admin.dto.AdminTokenDto;
 import com.revy.domain.admin.Admin;
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.RoleRepository;
 import com.revy.jwt.provider.JwtTokenProvider;
@@ -46,7 +46,7 @@ public class AdminProcessorImpl implements AdminProcessor {
                     return new AdminReaderDto.RoleRef(savedRole.getId(), savedRole.getName());
                 });
 
-        Admin admin = Admin.create(email, passwordEncoder.encode(rawPassword), UserStatus.ACTIVE, true);
+        Admin admin = Admin.create(email, passwordEncoder.encode(rawPassword), AdminStatus.ACTIVE, true);
         admin.addRole(roleRepository.getReferenceById(roleRef.id()));
         adminRepository.save(admin);
 
@@ -59,7 +59,7 @@ public class AdminProcessorImpl implements AdminProcessor {
         AdminReaderDto.AuthAdmin admin = adminReader.getAuthAdminByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
-        if (!admin.enabled() || admin.status() != UserStatus.ACTIVE) {
+        if (!admin.enabled() || admin.status() != AdminStatus.ACTIVE) {
             throw new IllegalArgumentException("비활성화된 계정입니다.");
         }
         if (!passwordEncoder.matches(rawPassword, admin.encodedPassword())) {
@@ -86,7 +86,7 @@ public class AdminProcessorImpl implements AdminProcessor {
         AdminReaderDto.AuthAdmin admin = adminReader.getAuthAdminById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!admin.enabled() || admin.status() != UserStatus.ACTIVE) {
+        if (!admin.enabled() || admin.status() != AdminStatus.ACTIVE) {
             throw new IllegalArgumentException("비활성화된 계정입니다.");
         }
         return issueToken(admin.id().toString());
@@ -94,7 +94,7 @@ public class AdminProcessorImpl implements AdminProcessor {
 
     @Override
     @Transactional
-    public void updateAdmin(UUID adminId, String email, String rawPassword, UserStatus status, Boolean enabled, List<String> roleIds) {
+    public void updateAdmin(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds) {
         AdminReaderDto.AuthAdmin current = adminReader.getAuthAdminById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 

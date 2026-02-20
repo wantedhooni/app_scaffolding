@@ -2,7 +2,7 @@ package com.revy.api.admin.server.infra.filter;
 
 import com.revy.api.admin.server.facade.admin.AdminReader;
 import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
-import com.revy.domain.admin.enums.UserStatus;
+import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.jwt.provider.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         AdminReaderDto.AuthAdmin admin = adminReader.getAuthAdminById(adminId)
                 .orElseThrow(() -> new BadCredentialsException("Invalid access token"));
-        if (!admin.enabled() || admin.status() != UserStatus.ACTIVE) {
+        if (!admin.enabled() || admin.status() != AdminStatus.ACTIVE) {
             throw new BadCredentialsException("Inactive account");
         }
 
