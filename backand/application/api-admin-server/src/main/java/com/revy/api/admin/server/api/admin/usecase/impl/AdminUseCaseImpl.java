@@ -43,7 +43,7 @@ public class AdminUseCaseImpl implements AdminUseCase {
 
     @Override
     public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateReq req) {
-        adminProcessor.updateAdmin(adminId, req.email(), req.password(), req.status(), req.enabled());
+        adminProcessor.updateAdmin(adminId, req.email(), req.password(), req.status(), req.enabled(), req.roleIds());
         return get(adminId);
     }
 
@@ -59,6 +59,7 @@ public class AdminUseCaseImpl implements AdminUseCase {
                 admin.email(),
                 admin.status().name(),
                 admin.enabled(),
+                admin.roleIds().stream().map(UUID::toString).collect(java.util.stream.Collectors.toSet()),
                 admin.roleNames(),
                 admin.createdAt(),
                 admin.updatedAt()
