@@ -1,7 +1,7 @@
-package com.revy.api.admin.server.api.admin.usecase.impl;
+package com.revy.api.admin.server.api.administrator.admin.usecase.impl;
 
-import com.revy.api.admin.server.api.admin.payload.AdminPayload;
-import com.revy.api.admin.server.api.admin.usecase.AdminUseCase;
+import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
+import com.revy.api.admin.server.api.administrator.admin.usecase.AdminUseCase;
 import com.revy.api.admin.server.common.PageResponse;
 import com.revy.api.admin.server.facade.admin.AdminProcessor;
 import com.revy.api.admin.server.facade.admin.AdminReader;
@@ -31,7 +31,7 @@ public class AdminUseCaseImpl implements AdminUseCase {
     }
 
     @Override
-    public PageResponse<AdminPayload.Res> getPage(int page, int size) {
+    public PageResponse<AdminPayload.Res> getPage(int page, int size, String paramQuery) {
         AdminReaderDto.AdminPage result = adminReader.getAdminViewPage(page, size);
         return PageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
@@ -42,7 +42,7 @@ public class AdminUseCaseImpl implements AdminUseCase {
     }
 
     @Override
-    public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateReq req) {
+    public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req) {
         adminProcessor.updateAdmin(adminId, req.email(), req.password(), req.status(), req.enabled(), req.roleIds());
         return get(adminId);
     }

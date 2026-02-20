@@ -1,4 +1,4 @@
-package com.revy.api.admin.server.api.permission.payload;
+package com.revy.api.admin.server.api.administrator.permission.payload;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -17,17 +17,8 @@ public class PermissionPayload {
 
     @Schema(name = "PermissionPayload.UpdateCommandReq")
     public record UpdateCommandReq(
-            @NotNull
-            String permissionId,
             String code,
             String description
-    ) {
-    }
-
-    @Schema(name = "PermissionPayload.DeleteCommandReq")
-    public record DeleteCommandReq(
-            @NotNull
-            String permissionId
     ) {
     }
 
@@ -38,14 +29,6 @@ public class PermissionPayload {
             String description,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
-    ) {
-    }
-
-    @Schema(name = "PermissionPayload.DeleteRes")
-    public record DeleteRes(
-            String id,
-            boolean deleted,
-            String message
     ) {
     }
 }

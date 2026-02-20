@@ -29,7 +29,7 @@ public class AdminRole extends BaseEntity {
     @Column(length = 200)
     private String description;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "adminRoles", fetch = FetchType.LAZY)
     private Set<Admin> admins = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

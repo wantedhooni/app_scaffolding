@@ -1,4 +1,4 @@
-package com.revy.api.admin.server.api.admin.payload;
+package com.revy.api.admin.server.api.administrator.admin.payload;
 
 import com.revy.domain.admin.enums.AdminStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,8 +34,6 @@ public class AdminPayload {
 
     @Schema(name = "AdminPayload.UpdateCommandReq")
     public record UpdateCommandReq(
-            @NotNull
-            String adminId,
             @Email
             String email,
             String password,

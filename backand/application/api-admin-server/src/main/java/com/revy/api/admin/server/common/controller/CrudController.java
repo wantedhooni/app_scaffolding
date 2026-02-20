@@ -2,26 +2,20 @@ package com.revy.api.admin.server.common.controller;
 
 import com.revy.api.admin.server.common.ApiResponse;
 import com.revy.api.admin.server.common.PageResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
-public abstract class CrudController<CREQ, UREQ, DREQ, RES, DRES> {
+public abstract class CrudController<
+        CREQ,
+        UREQ,
+        RES> {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<RES>> create(@Valid @RequestBody CREQ req) {
@@ -46,14 +40,15 @@ public abstract class CrudController<CREQ, UREQ, DREQ, RES, DRES> {
         ));
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<ApiResponse<RES>> update(@Valid @RequestBody UREQ req) {
-        return ResponseEntity.ok(ApiResponse.ok(doUpdate(req)));
+    @PostMapping("/{id}/update")
+    public ResponseEntity<ApiResponse<RES>> update(@PathVariable UUID id, @Valid @RequestBody UREQ req) {
+        return ResponseEntity.ok(ApiResponse.ok(doUpdate(id, req)));
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<ApiResponse<DRES>> delete(@Valid @RequestBody DREQ req) {
-        return ResponseEntity.ok(ApiResponse.ok(doDelete(req)));
+    @PostMapping("/{id}/delete")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+        doDelete(id);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     protected abstract PageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
@@ -63,7 +58,7 @@ public abstract class CrudController<CREQ, UREQ, DREQ, RES, DRES> {
     protected abstract RES doGet(UUID id);
 
 
-    protected abstract RES doUpdate(UREQ req);
+    protected abstract RES doUpdate(UUID id, UREQ req);
 
-    protected abstract DRES doDelete(DREQ req);
+    protected abstract void doDelete(UUID id);
 }

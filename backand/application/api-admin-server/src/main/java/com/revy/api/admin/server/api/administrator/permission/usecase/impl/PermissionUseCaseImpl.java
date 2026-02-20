@@ -1,7 +1,7 @@
-package com.revy.api.admin.server.api.permission.usecase.impl;
+package com.revy.api.admin.server.api.administrator.permission.usecase.impl;
 
-import com.revy.api.admin.server.api.permission.payload.PermissionPayload;
-import com.revy.api.admin.server.api.permission.usecase.PermissionUseCase;
+import com.revy.api.admin.server.api.administrator.permission.payload.PermissionPayload;
+import com.revy.api.admin.server.api.administrator.permission.usecase.PermissionUseCase;
 import com.revy.api.admin.server.common.PageResponse;
 import com.revy.api.admin.server.facade.permission.PermissionProcessor;
 import com.revy.api.admin.server.facade.permission.PermissionReader;
@@ -31,7 +31,8 @@ public class PermissionUseCaseImpl implements PermissionUseCase {
     }
 
     @Override
-    public PageResponse<PermissionPayload.Res> getPage(int page, int size) {
+    public PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                       String paramQuery) {
         PermissionReaderDto.PermissionPage result = permissionReader.getPermissionViewPage(page, size);
         return PageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
@@ -42,17 +43,14 @@ public class PermissionUseCaseImpl implements PermissionUseCase {
     }
 
     @Override
-    public PermissionPayload.Res update(PermissionPayload.UpdateCommandReq req) {
-        UUID permissionId = UUID.fromString(req.permissionId());
-        permissionProcessor.updatePermission(permissionId, req.code(), req.description());
-        return get(permissionId);
+    public PermissionPayload.Res update(UUID id, PermissionPayload.UpdateCommandReq req) {
+        permissionProcessor.updatePermission(id, req.code(), req.description());
+        return get(id);
     }
 
     @Override
-    public PermissionPayload.DeleteRes delete(PermissionPayload.DeleteCommandReq req) {
-        UUID permissionId = UUID.fromString(req.permissionId());
-        permissionProcessor.deletePermission(permissionId);
-        return new PermissionPayload.DeleteRes(permissionId.toString(), true, "권한이 삭제되었습니다.");
+    public void delete(UUID id) {
+        permissionProcessor.deletePermission(id);
     }
 
     private PermissionPayload.Res toResponse(PermissionReaderDto.PermissionView permission) {

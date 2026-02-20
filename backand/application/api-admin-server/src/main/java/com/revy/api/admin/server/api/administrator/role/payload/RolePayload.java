@@ -1,4 +1,4 @@
-package com.revy.api.admin.server.api.role.payload;
+package com.revy.api.admin.server.api.administrator.role.payload;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -17,17 +17,8 @@ public class RolePayload {
 
     @Schema(name = "RolePayload.UpdateCommandReq")
     public record UpdateCommandReq(
-            @NotNull
-            String roleId,
             String name,
             String description
-    ) {
-    }
-
-    @Schema(name = "RolePayload.DeleteCommandReq")
-    public record DeleteCommandReq(
-            @NotNull
-            String roleId
     ) {
     }
 
