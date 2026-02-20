@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Space, Spin, Typography } from "antd";
-import { apiFetch } from "@/lib/api";
+import { getPermission, updatePermission } from "@/lib/api";
 
 type Permission = {
   id: string;
@@ -27,11 +27,11 @@ export default function PermissionDetailPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch<Permission>(`/api/permission/${params.permissionId}`, { method: "GET" });
-      setData(res.data);
+      const permission = await getPermission<Permission>(params.permissionId);
+      setData(permission);
       form.setFieldsValue({
-        code: res.data.code,
-        description: res.data.description,
+        code: permission.code,
+        description: permission.description,
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "상세 조회 실패";
@@ -50,10 +50,7 @@ export default function PermissionDetailPage() {
     const values = await form.validateFields();
     try {
       setSaving(true);
-      await apiFetch<Permission>("/api/permission/update", {
-        method: "POST",
-        body: JSON.stringify({ permissionId: params.permissionId, ...values }),
-      });
+      await updatePermission<Permission>({ permissionId: params.permissionId, ...values });
       message.success("권한을 수정했습니다.");
       setOpenEdit(false);
       await load();

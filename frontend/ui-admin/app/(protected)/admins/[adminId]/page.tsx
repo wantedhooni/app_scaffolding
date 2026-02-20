@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Switch, Tag, Typography } from "antd";
-import { apiFetch } from "@/lib/api";
+import { getAdmin, getRolePage, updateAdmin } from "@/lib/api";
 
 type Admin = {
   id: string;
@@ -21,14 +21,6 @@ type Role = {
   name: string;
 };
 
-type PageResponse<T> = {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
-};
-
 export default function AdminDetailPage() {
   const params = useParams<{ adminId: string }>();
   const router = useRouter();
@@ -44,14 +36,14 @@ export default function AdminDetailPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch<Admin>(`/api/admin/${params.adminId}`, { method: "GET" });
-      setData(res.data);
+      const admin = await getAdmin<Admin>(params.adminId);
+      setData(admin);
       form.setFieldsValue({
-        email: res.data.email,
+        email: admin.email,
         password: "",
-        status: res.data.status,
-        enabled: res.data.enabled,
-        roleIds: res.data.roleIds ?? [],
+        status: admin.status,
+        enabled: admin.enabled,
+        roleIds: admin.roleIds ?? [],
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "상세 조회 실패";
@@ -69,8 +61,8 @@ export default function AdminDetailPage() {
 
   const loadRoleOptions = async () => {
     try {
-      const res = await apiFetch<PageResponse<Role>>("/api/role?page=0&size=200", { method: "GET" });
-      setRoleOptions((res.data.content ?? []).map((role) => ({ label: role.name, value: role.id })));
+      const res = await getRolePage<Role>({ page: 0, size: 200 });
+      setRoleOptions((res.content ?? []).map((role) => ({ label: role.name, value: role.id })));
     } catch {
       // ignore - role option fallback
     }
@@ -80,10 +72,7 @@ export default function AdminDetailPage() {
     const values = await form.validateFields();
     try {
       setSaving(true);
-      await apiFetch<Admin>("/api/admin/update", {
-        method: "POST",
-        body: JSON.stringify({ adminId: params.adminId, ...values }),
-      });
+      await updateAdmin<Admin>({ adminId: params.adminId, ...values });
       message.success("사용자 정보를 수정했습니다.");
       setOpenEdit(false);
       await load();

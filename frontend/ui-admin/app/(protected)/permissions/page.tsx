@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { App, Button, Card, Form, Input, Modal, Popconfirm, Space, Table, Typography } from "antd";
-import { apiFetch } from "@/lib/api";
+import type { ColumnsType } from "antd/es/table";
+import { createPermission, deletePermission, getPermissionPage, getUiMeta, updatePermission, type UiMetaView } from "@/lib/api";
+import { buildColumnsFromMeta } from "@/lib/ui-meta";
 
 type Permission = {
   id: string;
@@ -13,30 +15,38 @@ type Permission = {
   updatedAt?: string;
 };
 
-type PageResponse<T> = {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
-};
-
 export default function PermissionsPage() {
   const router = useRouter();
   const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<Permission[]>([]);
+  const [meta, setMeta] = useState<UiMetaView | null>(null);
   const [openCreate, setOpenCreate] = useState(false);
   const [editing, setEditing] = useState<Permission | null>(null);
 
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
+  const [filterForm] = Form.useForm();
 
-  const load = async () => {
+  const toQueryString = (filters?: Record<string, unknown>) => {
+    const params = new URLSearchParams({ page: "0", size: "50" });
+    Object.entries(filters ?? {}).forEach(([key, raw]) => {
+      if (raw === null || raw === undefined || raw === "") return;
+      params.set(key, String(raw));
+    });
+    return params.toString();
+  };
+
+  const load = async (filters?: Record<string, unknown>) => {
     setLoading(true);
     try {
-      const res = await apiFetch<PageResponse<Permission>>("/api/permission?page=0&size=50", { method: "GET" });
-      setRows(res.data.content ?? []);
+      const path = meta?.resourcePath ?? "/api/permission/list";
+      const query = Object.fromEntries(new URLSearchParams(toQueryString(filters)).entries());
+      const baseRows = path.startsWith("/api/permission")
+        ? (await getPermissionPage<Permission>(query)).content ?? []
+        : (await getPermissionPage<Permission>({ page: 0, size: 50 })).content ?? [];
+      const codeFilter = String(filters?.code ?? "").trim().toLowerCase();
+      setRows(baseRows.filter((row) => !codeFilter || row.code.toLowerCase().includes(codeFilter)));
     } catch (e) {
       message.error(e instanceof Error ? e.message : "목록 조회 실패");
     } finally {
@@ -44,21 +54,30 @@ export default function PermissionsPage() {
     }
   };
 
+  const loadMeta = async () => {
+    try {
+      setMeta(await getUiMeta("permissions"));
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "UI 메타 조회 실패");
+    }
+  };
+
   useEffect(() => {
-    load();
+    loadMeta();
   }, []);
+
+  useEffect(() => {
+    load(filterForm.getFieldsValue());
+  }, [meta]);
 
   const onCreate = async () => {
     const values = await createForm.validateFields();
     try {
-      await apiFetch<Permission>("/api/permission/create", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
+      await createPermission<Permission>(values);
       message.success("권한을 생성했습니다.");
       createForm.resetFields();
       setOpenCreate(false);
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "생성 실패");
     }
@@ -68,13 +87,10 @@ export default function PermissionsPage() {
     if (!editing) return;
     const values = await editForm.validateFields();
     try {
-      await apiFetch<Permission>("/api/permission/update", {
-        method: "POST",
-        body: JSON.stringify({ permissionId: editing.id, ...values }),
-      });
+      await updatePermission<Permission>({ permissionId: editing.id, ...values });
       message.success("권한을 수정했습니다.");
       setEditing(null);
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "수정 실패");
     }
@@ -82,27 +98,31 @@ export default function PermissionsPage() {
 
   const onDelete = async (id: string) => {
     try {
-      await apiFetch<{ id: string; deleted: boolean; message: string }>("/api/permission/delete", {
-        method: "POST",
-        body: JSON.stringify({ permissionId: id }),
-      });
+      await deletePermission(id);
       message.success("권한을 삭제했습니다.");
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "삭제 실패");
     }
   };
 
-  const columns = useMemo(
-    () => [
-      { title: "Code", dataIndex: "code" },
-      { title: "Description", dataIndex: "description" },
+  const fallbackColumns: UiMetaView["columns"] = [
+    { key: "code", label: "Code", dataType: "string", sortable: true, visible: true, width: 220, order: 10 },
+    { key: "description", label: "Description", dataType: "string", sortable: false, visible: true, width: 320, order: 20 },
+  ];
+
+  const columns = useMemo<ColumnsType<Permission>>(() => {
+    const dynamicColumns = buildColumnsFromMeta<Permission>(meta?.columns ?? fallbackColumns);
+    return [
+      ...dynamicColumns,
       {
         title: "Actions",
         key: "actions",
         render: (_: unknown, row: Permission) => (
           <Space>
-            <Button size="small" onClick={() => router.push(`/permissions/${row.id}`)}>상세</Button>
+            <Button size="small" onClick={() => router.push(`/permissions/${row.id}`)}>
+              상세
+            </Button>
             <Button
               size="small"
               onClick={() => {
@@ -123,23 +143,43 @@ export default function PermissionsPage() {
           </Space>
         ),
       },
-    ],
-    [editForm, router],
-  );
+    ];
+  }, [editForm, meta?.columns, router]);
 
   return (
     <>
       <Card
-        title="권한 관리"
+        title={meta?.title ?? "권한 관리"}
         extra={
           <Button type="primary" onClick={() => setOpenCreate(true)}>
             권한 생성
           </Button>
         }
       >
-        <Typography.Paragraph type="secondary">
-          권한 생성/수정/삭제 커맨드를 실행하는 운영 화면입니다.
-        </Typography.Paragraph>
+        <Typography.Paragraph type="secondary">DB 메타 기반 그리드/검색 필터 화면입니다.</Typography.Paragraph>
+
+        <Form form={filterForm} layout="inline" onFinish={(values) => load(values)} style={{ marginBottom: 16, rowGap: 8 }}>
+          {(meta?.filters ?? []).map((filter) => (
+            <Form.Item key={filter.key} name={filter.key} label={filter.label}>
+              <Input allowClear placeholder={filter.placeholder} />
+            </Form.Item>
+          ))}
+          <Form.Item>
+            <Space>
+              <Button htmlType="submit" type="primary">
+                검색
+              </Button>
+              <Button
+                onClick={() => {
+                  filterForm.resetFields();
+                  load({});
+                }}
+              >
+                초기화
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
 
         <Table rowKey="id" loading={loading} dataSource={rows} columns={columns} pagination={false} />
       </Card>

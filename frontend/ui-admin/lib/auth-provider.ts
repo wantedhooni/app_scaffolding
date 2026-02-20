@@ -1,21 +1,11 @@
 "use client";
 
-import { apiFetch, tokenStore } from "./api";
-
-type LoginResponse = {
-  tokenType: string;
-  accessToken: string;
-  refreshToken: string;
-};
+import { loginAndStoreTokens, tokenStore } from "./api";
 
 export const authProvider = {
   login: async ({ email, password }: { email: string; password: string }) => {
     try {
-      const res = await apiFetch<LoginResponse>("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
-      tokenStore.setTokens(res.data.accessToken, res.data.refreshToken);
+      await loginAndStoreTokens(email, password);
       return { success: true, redirectTo: "/dashboard" };
     } catch (e) {
       return {

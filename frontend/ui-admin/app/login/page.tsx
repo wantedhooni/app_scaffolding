@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Typography, Alert } from "antd";
 import { useRouter } from "next/navigation";
-import { apiFetch, tokenStore } from "@/lib/api";
-
-type LoginRes = {
-  tokenType: string;
-  accessToken: string;
-  refreshToken: string;
-};
+import { loginAndStoreTokens, tokenStore } from "@/lib/api";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
@@ -26,11 +20,7 @@ export default function LoginPage() {
     try {
       setSubmitting(true);
       setErrorMessage(null);
-      const res = await apiFetch<LoginRes>("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-      tokenStore.setTokens(res.data.accessToken, res.data.refreshToken);
+      await loginAndStoreTokens(values.email, values.password);
       router.replace("/dashboard");
     } catch (e) {
       setErrorMessage(e instanceof Error ? e.message : "로그인 실패");

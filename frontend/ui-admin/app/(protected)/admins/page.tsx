@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { App, Button, Card, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from "antd";
-import { apiFetch } from "@/lib/api";
+import { App, Button, Card, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { createAdmin, deleteAdmin, getAdminPage, getRolePage, getUiMeta, updateAdmin, type UiMetaView } from "@/lib/api";
+import { buildColumnsFromMeta } from "@/lib/ui-meta";
 
 type Admin = {
   id: string;
@@ -21,31 +23,52 @@ type Role = {
   name: string;
 };
 
-type PageResponse<T> = {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
-};
-
 export default function AdminsPage() {
   const router = useRouter();
   const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<Admin[]>([]);
+  const [meta, setMeta] = useState<UiMetaView | null>(null);
   const [openCreate, setOpenCreate] = useState(false);
   const [editing, setEditing] = useState<Admin | null>(null);
   const [roleOptions, setRoleOptions] = useState<Array<{ label: string; value: string }>>([]);
 
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
+  const [filterForm] = Form.useForm();
 
-  const load = async () => {
+  const toQueryString = (filters?: Record<string, unknown>) => {
+    const params = new URLSearchParams({ page: "0", size: "50" });
+    Object.entries(filters ?? {}).forEach(([key, raw]) => {
+      if (raw === null || raw === undefined || raw === "") return;
+      if (Array.isArray(raw)) {
+        if (raw.length === 0) return;
+        raw.forEach((value) => params.append(key, String(value)));
+        return;
+      }
+      params.set(key, String(raw));
+    });
+    return params.toString();
+  };
+
+  const load = async (filters?: Record<string, unknown>) => {
     setLoading(true);
     try {
-      const res = await apiFetch<PageResponse<Admin>>("/api/admin?page=0&size=50", { method: "GET" });
-      setRows(res.data.content ?? []);
+      const path = meta?.resourcePath ?? "/api/admin/list";
+      const query = Object.fromEntries(new URLSearchParams(toQueryString(filters)).entries());
+      const baseRows = path.startsWith("/api/admin")
+        ? (await getAdminPage<Admin>(query)).content ?? []
+        : (await getAdminPage<Admin>({ page: 0, size: 50 })).content ?? [];
+      const emailFilter = String(filters?.email ?? "").trim().toLowerCase();
+      const statusFilter = String(filters?.status ?? "").trim();
+      const enabledFilter = String(filters?.enabled ?? "").trim().toLowerCase();
+      const filtered = baseRows.filter((row) => {
+        const byEmail = !emailFilter || row.email.toLowerCase().includes(emailFilter);
+        const byStatus = !statusFilter || row.status === statusFilter;
+        const byEnabled = !enabledFilter || String(row.enabled) === enabledFilter;
+        return byEmail && byStatus && byEnabled;
+      });
+      setRows(filtered);
     } catch (e) {
       message.error(e instanceof Error ? e.message : "목록 조회 실패");
     } finally {
@@ -53,31 +76,40 @@ export default function AdminsPage() {
     }
   };
 
-  useEffect(() => {
-    load();
-    loadRoleOptions();
-  }, []);
+  const loadMeta = async () => {
+    try {
+      setMeta(await getUiMeta("admins"));
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "UI 메타 조회 실패");
+    }
+  };
 
   const loadRoleOptions = async () => {
     try {
-      const res = await apiFetch<PageResponse<Role>>("/api/role?page=0&size=200", { method: "GET" });
-      setRoleOptions((res.data.content ?? []).map((role) => ({ label: role.name, value: role.id })));
+      const res = await getRolePage<Role>({ page: 0, size: 200 });
+      setRoleOptions((res.content ?? []).map((role) => ({ label: role.name, value: role.id })));
     } catch {
-      // ignore - role option fallback
+      // ignore
     }
   };
+
+  useEffect(() => {
+    loadMeta();
+    loadRoleOptions();
+  }, []);
+
+  useEffect(() => {
+    load(filterForm.getFieldsValue());
+  }, [meta]);
 
   const onCreate = async () => {
     const values = await createForm.validateFields();
     try {
-      await apiFetch<Admin>("/api/admin/create", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
+      await createAdmin<Admin>(values);
       message.success("사용자를 생성했습니다.");
       createForm.resetFields();
       setOpenCreate(false);
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "생성 실패");
     }
@@ -87,13 +119,10 @@ export default function AdminsPage() {
     if (!editing) return;
     const values = await editForm.validateFields();
     try {
-      await apiFetch<Admin>("/api/admin/update", {
-        method: "POST",
-        body: JSON.stringify({ adminId: editing.id, ...values }),
-      });
+      await updateAdmin<Admin>({ adminId: editing.id, ...values });
       message.success("사용자 정보를 수정했습니다.");
       setEditing(null);
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "수정 실패");
     }
@@ -101,43 +130,33 @@ export default function AdminsPage() {
 
   const onDelete = async (id: string) => {
     try {
-      await apiFetch<{ id: string; deleted: boolean; message: string }>("/api/admin/delete", {
-        method: "POST",
-        body: JSON.stringify({ adminId: id }),
-      });
+      await deleteAdmin(id);
       message.success("사용자를 삭제했습니다.");
-      await load();
+      await load(filterForm.getFieldsValue());
     } catch (e) {
       message.error(e instanceof Error ? e.message : "삭제 실패");
     }
   };
 
-  const columns = useMemo(
-    () => [
-      { title: "Email", dataIndex: "email" },
-      {
-        title: "Status",
-        dataIndex: "status",
-        render: (v: string) => <Tag color={v === "ACTIVE" ? "green" : "default"}>{v}</Tag>,
-      },
-      {
-        title: "Enabled",
-        dataIndex: "enabled",
-        render: (v: boolean) => <Tag color={v ? "blue" : "red"}>{v ? "YES" : "NO"}</Tag>,
-      },
-      {
-        title: "Roles",
-        dataIndex: "roles",
-        render: (roles: string[]) => (
-          <Space wrap>{(roles ?? []).map((r) => <Tag key={r}>{r}</Tag>)}</Space>
-        ),
-      },
+  const fallbackColumns: UiMetaView["columns"] = [
+    { key: "email", label: "Email", dataType: "string", sortable: true, visible: true, width: 260, order: 10 },
+    { key: "status", label: "Status", dataType: "tag", sortable: true, visible: true, width: 120, order: 20 },
+    { key: "enabled", label: "Enabled", dataType: "boolean", sortable: true, visible: true, width: 120, order: 30 },
+    { key: "roles", label: "Roles", dataType: "tags", sortable: false, visible: true, width: 240, order: 40 },
+  ];
+
+  const columns = useMemo<ColumnsType<Admin>>(() => {
+    const dynamicColumns = buildColumnsFromMeta<Admin>(meta?.columns ?? fallbackColumns);
+    return [
+      ...dynamicColumns,
       {
         title: "Actions",
         key: "actions",
         render: (_: unknown, row: Admin) => (
           <Space>
-            <Button size="small" onClick={() => router.push(`/admins/${row.id}`)}>상세</Button>
+            <Button size="small" onClick={() => router.push(`/admins/${row.id}`)}>
+              상세
+            </Button>
             <Button
               size="small"
               onClick={() => {
@@ -161,23 +180,52 @@ export default function AdminsPage() {
           </Space>
         ),
       },
-    ],
-    [editForm, router],
-  );
+    ];
+  }, [editForm, meta?.columns, router]);
 
   return (
     <>
       <Card
-        title="사용자 관리"
+        title={meta?.title ?? "사용자 관리"}
         extra={
           <Button type="primary" onClick={() => setOpenCreate(true)}>
             사용자 생성
           </Button>
         }
       >
-        <Typography.Paragraph type="secondary">
-          커맨드 패턴 API(`create/update/delete`)를 직접 사용하는 운영 화면입니다.
-        </Typography.Paragraph>
+        <Typography.Paragraph type="secondary">DB의 UI 메타 정보로 컬럼/검색 필터를 동적으로 렌더링합니다.</Typography.Paragraph>
+
+        <Form
+          form={filterForm}
+          layout="inline"
+          onFinish={(values) => load(values)}
+          style={{ marginBottom: 16, rowGap: 8 }}
+        >
+          {(meta?.filters ?? []).map((filter) => (
+            <Form.Item key={filter.key} name={filter.key} label={filter.label}>
+              {filter.componentType === "select" ? (
+                <Select allowClear style={{ minWidth: 180 }} placeholder={filter.placeholder} options={filter.options} />
+              ) : (
+                <Input allowClear placeholder={filter.placeholder} />
+              )}
+            </Form.Item>
+          ))}
+          <Form.Item>
+            <Space>
+              <Button htmlType="submit" type="primary">
+                검색
+              </Button>
+              <Button
+                onClick={() => {
+                  filterForm.resetFields();
+                  load({});
+                }}
+              >
+                초기화
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
 
         <Table rowKey="id" loading={loading} dataSource={rows} columns={columns} pagination={false} />
       </Card>

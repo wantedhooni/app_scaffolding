@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Table, Typography } from "antd";
-import { apiFetch } from "@/lib/api";
+import { addAdminToRole, getAdminPage, getRole, updateRole } from "@/lib/api";
 
 type Role = {
   id: string;
@@ -17,14 +17,6 @@ type Role = {
 type Admin = {
   id: string;
   email: string;
-};
-
-type AdminPage = {
-  content: Admin[];
-  totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
 };
 
 export default function RoleDetailPage() {
@@ -45,11 +37,11 @@ export default function RoleDetailPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch<Role>(`/api/role/${params.roleId}`, { method: "GET" });
-      setData(res.data);
+      const role = await getRole<Role>(params.roleId);
+      setData(role);
       form.setFieldsValue({
-        name: res.data.name,
-        description: res.data.description,
+        name: role.name,
+        description: role.description,
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "상세 조회 실패";
@@ -68,10 +60,7 @@ export default function RoleDetailPage() {
     const values = await form.validateFields();
     try {
       setSaving(true);
-      await apiFetch<Role>("/api/role/update", {
-        method: "POST",
-        body: JSON.stringify({ roleId: params.roleId, ...values }),
-      });
+      await updateRole<Role>({ roleId: params.roleId, ...values });
       message.success("역할을 수정했습니다.");
       setOpenEdit(false);
       await load();
@@ -84,9 +73,9 @@ export default function RoleDetailPage() {
 
   const loadAdminOptions = async () => {
     try {
-      const res = await apiFetch<AdminPage>("/api/admin?page=0&size=200", { method: "GET" });
+      const res = await getAdminPage<Admin>({ page: 0, size: 200 });
       const assigned = new Set((data?.admins ?? []).map((a) => a.id));
-      const options = (res.data.content ?? [])
+      const options = (res.content ?? [])
         .filter((admin) => !assigned.has(admin.id))
         .map((admin) => ({ label: admin.email, value: admin.id }));
       setAdminOptions(options);
@@ -99,10 +88,7 @@ export default function RoleDetailPage() {
     const values = await addForm.validateFields();
     try {
       setAdding(true);
-      await apiFetch<Role>("/api/role/add-admin", {
-        method: "POST",
-        body: JSON.stringify({ roleId: params.roleId, adminId: values.adminId }),
-      });
+      await addAdminToRole<Role>(params.roleId, values.adminId);
       message.success("역할에 사용자를 추가했습니다.");
       setOpenAddAdmin(false);
       addForm.resetFields();

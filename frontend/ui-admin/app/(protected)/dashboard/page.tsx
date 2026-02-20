@@ -2,12 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Card, Col, Empty, Row, Table, Tag, Typography } from "antd";
-import { API_BASE_URL } from "@/lib/api";
-
-type OpenApiDoc = {
-  tags?: Array<{ name: string; description?: string }>;
-  paths?: Record<string, Record<string, { tags?: string[]; summary?: string }>>;
-};
+import { API_BASE_URL, getOpenApiDoc, type OpenApiDoc } from "@/lib/api";
 
 type EndpointRow = {
   key: string;
@@ -21,8 +16,7 @@ export default function DashboardPage() {
   const [doc, setDoc] = useState<OpenApiDoc | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/v3/api-docs`)
-      .then((res) => res.json())
+    getOpenApiDoc()
       .then((json: OpenApiDoc) => setDoc(json))
       .catch(() => setDoc({}));
   }, []);
