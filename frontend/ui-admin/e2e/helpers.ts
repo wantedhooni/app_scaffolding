@@ -38,7 +38,7 @@ export async function mockApi(page: Page) {
   let admins: Admin[] = [
     {
       id: "11111111-1111-1111-1111-111111111111",
-      email: "admin@revy.local",
+      email: "sysadmin@system.dev",
       status: "ACTIVE",
       enabled: true,
       roles: ["ROLE_ADMIN"],
@@ -53,7 +53,7 @@ export async function mockApi(page: Page) {
 
   await page.route("http://localhost:8080/api/auth/login", async (route) => {
     const body = route.request().postDataJSON() as { email: string; password: string };
-    if (body.email === "admin@revy.local" && body.password === "admin1234!") {
+    if (body.email === "sysadmin@system.dev" && body.password === "qwer1234!") {
       await route.fulfill({
         status: 200,
         contentType: "application/json",

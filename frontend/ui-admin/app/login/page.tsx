@@ -52,7 +52,7 @@ export default function LoginPage() {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ email: "admin@revy.local", password: "admin1234!" }}
+          initialValues={{ email: "sysadmin@system.dev", password: "qwer1234!" }}
           onFinish={onSubmit}
         >
           <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>

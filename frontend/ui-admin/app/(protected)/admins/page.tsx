@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography, message } from "antd";
+import { App, Button, Card, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from "antd";
 import { apiFetch } from "@/lib/api";
 
 type Admin = {
@@ -10,9 +10,15 @@ type Admin = {
   email: string;
   status: string;
   enabled: boolean;
+  roleIds?: string[];
   roles: string[];
   createdAt?: string;
   updatedAt?: string;
+};
+
+type Role = {
+  id: string;
+  name: string;
 };
 
 type PageResponse<T> = {
@@ -25,10 +31,12 @@ type PageResponse<T> = {
 
 export default function AdminsPage() {
   const router = useRouter();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<Admin[]>([]);
   const [openCreate, setOpenCreate] = useState(false);
   const [editing, setEditing] = useState<Admin | null>(null);
+  const [roleOptions, setRoleOptions] = useState<Array<{ label: string; value: string }>>([]);
 
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
@@ -47,7 +55,17 @@ export default function AdminsPage() {
 
   useEffect(() => {
     load();
+    loadRoleOptions();
   }, []);
+
+  const loadRoleOptions = async () => {
+    try {
+      const res = await apiFetch<PageResponse<Role>>("/api/role?page=0&size=200", { method: "GET" });
+      setRoleOptions((res.data.content ?? []).map((role) => ({ label: role.name, value: role.id })));
+    } catch {
+      // ignore - role option fallback
+    }
+  };
 
   const onCreate = async () => {
     const values = await createForm.validateFields();
@@ -129,6 +147,7 @@ export default function AdminsPage() {
                   password: "",
                   status: row.status,
                   enabled: row.enabled,
+                  roleIds: row.roleIds ?? [],
                 });
               }}
             >
@@ -163,7 +182,7 @@ export default function AdminsPage() {
         <Table rowKey="id" loading={loading} dataSource={rows} columns={columns} pagination={false} />
       </Card>
 
-      <Modal open={openCreate} title="사용자 생성" onCancel={() => setOpenCreate(false)} onOk={onCreate} okText="생성 실행">
+      <Modal forceRender open={openCreate} title="사용자 생성" onCancel={() => setOpenCreate(false)} onOk={onCreate} okText="생성 실행">
         <Form form={createForm} layout="vertical">
           <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
             <Input />
@@ -174,7 +193,7 @@ export default function AdminsPage() {
         </Form>
       </Modal>
 
-      <Modal open={!!editing} title="사용자 수정" onCancel={() => setEditing(null)} onOk={onUpdate} okText="수정 반영">
+      <Modal forceRender open={!!editing} title="사용자 수정" onCancel={() => setEditing(null)} onOk={onUpdate} okText="수정 반영">
         <Form form={editForm} layout="vertical">
           <Form.Item name="email" label="Email" rules={[{ type: "email" }]}>
             <Input />
@@ -193,6 +212,9 @@ export default function AdminsPage() {
           </Form.Item>
           <Form.Item name="enabled" label="Enabled" valuePropName="checked">
             <Switch />
+          </Form.Item>
+          <Form.Item name="roleIds" label="Roles">
+            <Select mode="multiple" options={roleOptions} allowClear />
           </Form.Item>
         </Form>
       </Modal>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Alert, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Switch, Tag, Typography, message } from "antd";
+import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Switch, Tag, Typography } from "antd";
 import { apiFetch } from "@/lib/api";
 
 type Admin = {
@@ -10,19 +10,35 @@ type Admin = {
   email: string;
   status: string;
   enabled: boolean;
+  roleIds?: string[];
   roles: string[];
   createdAt?: string;
   updatedAt?: string;
 };
 
+type Role = {
+  id: string;
+  name: string;
+};
+
+type PageResponse<T> = {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  page: number;
+  size: number;
+};
+
 export default function AdminDetailPage() {
   const params = useParams<{ adminId: string }>();
   const router = useRouter();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Admin | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openEdit, setOpenEdit] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [roleOptions, setRoleOptions] = useState<Array<{ label: string; value: string }>>([]);
   const [form] = Form.useForm();
 
   const load = async () => {
@@ -35,6 +51,7 @@ export default function AdminDetailPage() {
         password: "",
         status: res.data.status,
         enabled: res.data.enabled,
+        roleIds: res.data.roleIds ?? [],
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "상세 조회 실패";
@@ -47,7 +64,17 @@ export default function AdminDetailPage() {
 
   useEffect(() => {
     load();
+    loadRoleOptions();
   }, [params.adminId]);
+
+  const loadRoleOptions = async () => {
+    try {
+      const res = await apiFetch<PageResponse<Role>>("/api/role?page=0&size=200", { method: "GET" });
+      setRoleOptions((res.data.content ?? []).map((role) => ({ label: role.name, value: role.id })));
+    } catch {
+      // ignore - role option fallback
+    }
+  };
 
   const onUpdate = async () => {
     const values = await form.validateFields();
@@ -104,6 +131,7 @@ export default function AdminDetailPage() {
       )}
 
       <Modal
+        forceRender
         open={openEdit}
         title="사용자 수정"
         onCancel={() => setOpenEdit(false)}
@@ -129,6 +157,9 @@ export default function AdminDetailPage() {
           </Form.Item>
           <Form.Item name="enabled" label="Enabled" valuePropName="checked">
             <Switch />
+          </Form.Item>
+          <Form.Item name="roleIds" label="Roles">
+            <Select mode="multiple" options={roleOptions} allowClear />
           </Form.Item>
         </Form>
       </Modal>

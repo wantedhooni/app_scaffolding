@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Alert, Button, Card, Descriptions, Form, Input, Modal, Space, Spin, Typography, message } from "antd";
+import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Space, Spin, Typography } from "antd";
 import { apiFetch } from "@/lib/api";
 
 type Permission = {
@@ -16,6 +16,7 @@ type Permission = {
 export default function PermissionDetailPage() {
   const params = useParams<{ permissionId: string }>();
   const router = useRouter();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Permission | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +93,7 @@ export default function PermissionDetailPage() {
       )}
 
       <Modal
+        forceRender
         open={openEdit}
         title="권한 수정"
         onCancel={() => setOpenEdit(false)}

@@ -1,5 +1,6 @@
 "use client";
 
+import "@ant-design/v5-patch-for-react-19";
 import { Refine } from "@refinedev/core";
 import { RefineThemes } from "@refinedev/antd";
 import { DashboardOutlined, SafetyCertificateOutlined, TeamOutlined, TagsOutlined } from "@ant-design/icons";

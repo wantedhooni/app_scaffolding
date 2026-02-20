@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Alert, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Table, Typography, message } from "antd";
+import { Alert, App, Button, Card, Descriptions, Form, Input, Modal, Select, Space, Spin, Table, Typography } from "antd";
 import { apiFetch } from "@/lib/api";
 
 type Role = {
@@ -30,6 +30,7 @@ type AdminPage = {
 export default function RoleDetailPage() {
   const params = useParams<{ roleId: string }>();
   const router = useRouter();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Role | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -162,6 +163,7 @@ export default function RoleDetailPage() {
       )}
 
       <Modal
+        forceRender
         open={openEdit}
         title="역할 수정"
         onCancel={() => setOpenEdit(false)}
@@ -180,6 +182,7 @@ export default function RoleDetailPage() {
       </Modal>
 
       <Modal
+        forceRender
         open={openAddAdmin}
         title="사용자 추가"
         onCancel={() => setOpenAddAdmin(false)}
