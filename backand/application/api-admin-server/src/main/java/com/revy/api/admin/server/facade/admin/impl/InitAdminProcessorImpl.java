@@ -33,7 +33,7 @@ public class InitAdminProcessorImpl implements InitAdminProcessor {
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.bootstrap.admin.email:sysadmin@systme.dev}")
+    @Value("${app.bootstrap.admin.email:sysadmin@system.dev}")
     private String bootstrapAdminEmail;
 
     @Value("${app.bootstrap.admin.password:qwer1234!}")
