@@ -1,7 +1,7 @@
 package com.revy.api.admin.server.infra.filter;
 
-import com.revy.api.admin.server.facade.admin.AdminReader;
-import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
+import com.revy.api.admin.server.facade.administrator.admin.AdminReader;
+import com.revy.api.admin.server.facade.administrator.admin.dto.AdminReaderDto;
 import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.jwt.provider.JwtTokenProvider;
 import jakarta.servlet.FilterChain;

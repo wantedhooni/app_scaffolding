@@ -3,9 +3,9 @@ package com.revy.api.admin.server.api.administrator.permission.usecase.impl;
 import com.revy.api.admin.server.api.administrator.permission.payload.PermissionPayload;
 import com.revy.api.admin.server.api.administrator.permission.usecase.PermissionUseCase;
 import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.permission.PermissionProcessor;
-import com.revy.api.admin.server.facade.permission.PermissionReader;
-import com.revy.api.admin.server.facade.permission.dto.PermissionReaderDto;
+import com.revy.api.admin.server.facade.administrator.permission.PermissionProcessor;
+import com.revy.api.admin.server.facade.administrator.permission.PermissionReader;
+import com.revy.api.admin.server.facade.administrator.permission.dto.PermissionReaderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -3,9 +3,9 @@ package com.revy.api.admin.server.api.administrator.admin.usecase.impl;
 import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
 import com.revy.api.admin.server.api.administrator.admin.usecase.AdminUseCase;
 import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.admin.AdminProcessor;
-import com.revy.api.admin.server.facade.admin.AdminReader;
-import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
+import com.revy.api.admin.server.facade.administrator.admin.AdminProcessor;
+import com.revy.api.admin.server.facade.administrator.admin.AdminReader;
+import com.revy.api.admin.server.facade.administrator.admin.dto.AdminReaderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

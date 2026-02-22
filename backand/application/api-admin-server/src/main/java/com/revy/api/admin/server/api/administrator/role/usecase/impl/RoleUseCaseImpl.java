@@ -3,12 +3,13 @@ package com.revy.api.admin.server.api.administrator.role.usecase.impl;
 import com.revy.api.admin.server.api.administrator.role.payload.RolePayload;
 import com.revy.api.admin.server.api.administrator.role.usecase.RoleUseCase;
 import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.role.RoleProcessor;
-import com.revy.api.admin.server.facade.role.RoleReader;
-import com.revy.api.admin.server.facade.role.dto.RoleReaderDto;
+import com.revy.api.admin.server.facade.administrator.role.RoleProcessor;
+import com.revy.api.admin.server.facade.administrator.role.RoleReader;
+import com.revy.api.admin.server.facade.administrator.role.dto.RoleReaderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -46,8 +47,7 @@ public class RoleUseCaseImpl implements RoleUseCase {
 
     @Override
     public RolePayload.Res addAdmin(RolePayload.AddAdminCommandReq req) {
-        UUID roleId = UUID.fromString(req.roleId());
-        UUID adminId = UUID.fromString(req.adminId());
+        UUID roleId = UUID.fromString(req.roleId()), adminId = UUID.fromString(req.adminId());
         roleProcessor.addAdminToRole(roleId, adminId);
         return get(roleId);
     }
@@ -58,13 +58,12 @@ public class RoleUseCaseImpl implements RoleUseCase {
     }
 
     private RolePayload.Res toResponse(RoleReaderDto.RoleView role) {
-        return new RolePayload.Res(role.id().toString(), role.name(), role.description(), role.admins()
-                                                                                              .stream()
-                                                                                              .map(admin -> new RolePayload.AdminRef(
-                                                                                                      admin.id()
-                                                                                                           .toString(),
-                                                                                                      admin.email()))
-                                                                                              .toList(),
-                                   role.createdAt(), role.updatedAt());
+        List<RolePayload.AdminRef> adminRefs = role.admins()
+                                                   .stream()
+                                                   .map(admin -> {
+                                                       return new RolePayload.AdminRef(admin.id().toString(), admin.email());
+                                                   }).toList();
+        return new RolePayload.Res(role.id().toString(), role.name(), role.description(), adminRefs, role.createdAt(),
+                                   role.updatedAt());
     }
 }

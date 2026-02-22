@@ -1,7 +1,7 @@
 package com.revy.api.admin.server.init;
 
-import com.revy.api.admin.server.facade.admin.AdminReader;
-import com.revy.api.admin.server.facade.admin.InitAdminProcessor;
+import com.revy.api.admin.server.facade.administrator.admin.AdminReader;
+import com.revy.api.admin.server.facade.administrator.admin.InitAdminProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +22,8 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             log.info("security seed skipped: existing admin/role/permission data found");
         }
+
+
         log.info("DataInitializer end");
     }
 }
