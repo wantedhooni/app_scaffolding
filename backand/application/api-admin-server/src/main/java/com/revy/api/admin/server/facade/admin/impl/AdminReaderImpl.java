@@ -1,5 +1,8 @@
 package com.revy.api.admin.server.facade.admin.impl;
 
+import com.querydsl.core.BooleanBuilder;
+import com.revy.api.admin.server.common.search.SearchField;
+import com.revy.api.admin.server.common.search.SearchFieldUtils;
 import com.revy.api.admin.server.facade.admin.AdminReader;
 import com.revy.api.admin.server.facade.admin.dto.AdminReaderDto;
 import com.revy.domain.admin.Admin;
@@ -7,12 +10,12 @@ import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.QAdmin;
 import com.revy.domain.admin.QAdminPermission;
 import com.revy.domain.admin.QAdminRole;
-import com.revy.domain.admin.enums.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
 import com.revy.domain.admin.repository.RoleRepository;
-import com.querydsl.core.BooleanBuilder;
+import com.revy.utils.querydsl.ExpressionUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,10 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -81,9 +86,10 @@ public class AdminReaderImpl implements AdminReader {
         int safeSize = Math.max(size, 1);
         Sort sort = resolveSort(sortBy, sortDirection);
         BooleanBuilder predicate = buildSearchPredicate(paramQuery);
-
+        log.debug("predicate:{}", predicate);
         PageRequest pageable = PageRequest.of(safePage, safeSize, sort);
         Page<Admin> result = adminRepository.findAll(predicate, pageable);
+        log.debug("result.getTotalElements():{}", result.getTotalElements());
         return new AdminReaderDto.AdminPage(result.getContent().stream().map(this::toAdminView).toList(),
                                             result.getTotalElements(), safePage, safeSize);
     }
@@ -102,39 +108,32 @@ public class AdminReaderImpl implements AdminReader {
                                             admin.getUpdatedAt());
     }
 
+    // TODO: 정리 필요
     private BooleanBuilder buildSearchPredicate(String paramQuery) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         if (!StringUtils.hasText(paramQuery)) {
             return predicate;
         }
-
-        String[] tokens = paramQuery.split(":", 2);
-        if (tokens.length != 2 || !StringUtils.hasText(tokens[0]) || !StringUtils.hasText(tokens[1])) {
-            return predicate;
-        }
-
-        String field = tokens[0].trim();
-        String value = tokens[1].trim();
-
-        switch (field) {
-            case "email" -> predicate.and(QAdmin.admin.email.containsIgnoreCase(value));
-            case "status" -> {
-                try {
-                    predicate.and(QAdmin.admin.status.eq(AdminStatus.valueOf(value.toUpperCase())));
-                } catch (IllegalArgumentException ignored) {
-                    // invalid status filter is ignored intentionally
+        List<SearchField> fields = SearchFieldUtils.buildSearchField(paramQuery);
+        log.debug("fields: {}", fields);
+        fields.forEach(field -> {
+            switch (field.fieldName()) {
+                case "keyword" -> {
+                    predicate.and(ExpressionUtil.like(QAdmin.admin.email, field.value()));
+                }
+//                case "email" -> {
+//                    predicate.and(ExpressionUtil.like(QAdmin.admin.email, field.value()));
+//                }
+//                case "status" -> {
+//                    predicate.and(ExpressionUtil.in(QAdmin.admin.status, field.value()));
+//                }
+                default -> {
+                    // unsupported filter field is ignored intentionally
                 }
             }
-            case "enabled" -> {
-                if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                    predicate.and(QAdmin.admin.enabled.eq(Boolean.parseBoolean(value)));
-                }
-            }
-            default -> {
-                // unsupported filter field is ignored intentionally
-            }
-        }
+        });
+
 
         return predicate;
     }
@@ -166,6 +165,9 @@ public class AdminReaderImpl implements AdminReader {
         return new RoleSnapshot(roleIds, roleNames);
     }
 
-    private record RoleSnapshot(Set<UUID> roleIds, Set<String> roleNames) {
+    private record RoleSnapshot(
+            Set<UUID> roleIds,
+            Set<String> roleNames
+    ) {
     }
 }

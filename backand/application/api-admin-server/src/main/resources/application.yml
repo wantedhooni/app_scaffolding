@@ -21,6 +21,7 @@ server:
 logging:
   level:
     root: INFO
+    com.revy.*: DEBUG
 
 management:
   endpoints:

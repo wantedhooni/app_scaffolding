@@ -3,6 +3,8 @@ package com.revy.api.admin.server.common.controller;
 import com.revy.api.admin.server.common.ApiResponse;
 import com.revy.api.admin.server.common.PageResponse;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
+@Slf4j(access = AccessLevel.PROTECTED)
 public abstract class CrudController<
         CREQ,
         UREQ,

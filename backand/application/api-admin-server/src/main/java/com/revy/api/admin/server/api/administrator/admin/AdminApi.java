@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -22,6 +23,8 @@ public class AdminApi extends CrudController<AdminPayload.CreateReq, AdminPayloa
     @Override
     protected PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
                                                      String paramQuery) {
+        log.info("page: {}, size: {}, sort by: {}, sort direction: {}, paramQuery:{}", page, size, sortBy,
+                 sortDirection, paramQuery);
         return adminUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);
     }
 
