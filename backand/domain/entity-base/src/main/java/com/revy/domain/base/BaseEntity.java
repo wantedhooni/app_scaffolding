@@ -33,10 +33,12 @@ public class BaseEntity implements Serializable {
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;
 
+
     @PrePersist
     void prePersist() {
         onPrePersist();
     }
+
 
     protected void onPrePersist() {
         if (id == null) {
