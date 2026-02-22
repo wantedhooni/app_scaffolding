@@ -1,13 +1,22 @@
 import { expect, test } from "@playwright/test";
-import { mockApi } from "./helpers";
 
-test("로그인 성공 후 대시보드로 이동", async ({ page }) => {
-  await mockApi(page);
+test.describe("Auth flow", () => {
+  test("login page renders", async ({ page }) => {
+    await page.goto("/login");
 
-  await page.goto("/login");
-  await page.getByRole("button", { name: "로그인" }).click();
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByRole("button", { name: /sign in|login/i })).toBeVisible();
+  });
 
-  await page.waitForURL("**/dashboard");
-  await expect(page).toHaveURL(/\/dashboard/);
-  await expect(page.getByRole("heading", { name: "API 기반 대시보드" })).toBeVisible();
+  test("successful login redirects to protected page", async ({ page }) => {
+    await page.goto("/login");
+
+    await page.getByLabel(/e-?mail/i).fill("sysadmin@system.dev");
+    await page.getByLabel(/password/i).fill("qwer1234!");
+    await page.getByRole("button", { name: /sign in|login/i }).click();
+
+    await page.waitForURL(/\/domain\/[a-z-]+(?:\?.*)?$/);
+    await expect(page).not.toHaveURL(/\/login(?:\?.*)?$/);
+    await expect(page.getByRole("button", { name: /search/i }).first()).toBeVisible();
+  });
 });

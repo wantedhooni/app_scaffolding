@@ -1,0 +1,112 @@
+"use client";
+
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DeleteButton, EditButton, List, ShowButton, useDataGrid } from "@refinedev/mui";
+import { useModalForm } from "@refinedev/react-hook-form";
+import React from "react";
+
+import { DomainListToolbar } from "@components/domain-list-toolbar";
+import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, SEARCH_FIELDS, SEARCH_PLACEHOLDER } from "./constants";
+
+export default function DummyListTemplatePage() {
+  const [keyword, setKeyword] = React.useState("");
+
+  const { dataGridProps, search } = useDataGrid({
+    resource: RESOURCE,
+    onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
+      const value = searchKeyword.trim();
+
+      if (!value) {
+        return [];
+      }
+
+      return SEARCH_FIELDS.map((field) => ({
+        field,
+        operator: "contains" as const,
+        value,
+      }));
+    },
+  });
+
+  const {
+    modal,
+    register,
+    handleSubmit,
+    formState: { errors },
+    refineCore: { formLoading },
+  } = useModalForm({
+    refineCoreProps: {
+      resource: RESOURCE,
+      action: "create",
+    },
+  });
+
+  const handleSearch = React.useCallback(() => {
+    search({ keyword });
+  }, [keyword, search]);
+
+  const columns = React.useMemo<GridColDef[]>(
+    () => [
+      { field: "id", headerName: "ID", minWidth: 220, flex: 1 },
+      { field: PRIMARY_FIELD, headerName: PRIMARY_LABEL, minWidth: 220, flex: 1 },
+      {
+        field: "actions",
+        headerName: "Actions",
+        align: "right",
+        headerAlign: "right",
+        minWidth: 140,
+        sortable: false,
+        renderCell: ({ row }) => (
+          <>
+            <EditButton hideText recordItemId={row.id} />
+            <ShowButton hideText recordItemId={row.id} />
+            <DeleteButton hideText recordItemId={row.id} />
+          </>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return (
+    <List headerButtons={() => null}>
+      <DomainListToolbar
+        keyword={keyword}
+        onKeywordChange={setKeyword}
+        onSearch={handleSearch}
+        onCreate={modal.show}
+        createLabel={`Create ${ENTITY_LABEL}`}
+        keywordPlaceholder={SEARCH_PLACEHOLDER}
+      />
+      <DataGrid {...dataGridProps} columns={columns} autoHeight />
+      <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">
+        <DialogTitle>{`Create ${ENTITY_LABEL}`}</DialogTitle>
+        <DialogContent>
+          <Box
+            component="form"
+            id="create-dummy-form"
+            onSubmit={handleSubmit(modal.submit)}
+            sx={{ mt: 1, display: "flex", flexDirection: "column" }}
+            autoComplete="off"
+          >
+            <TextField
+              {...register(PRIMARY_FIELD, { required: `${PRIMARY_FIELD} is required` })}
+              error={!!(errors as any)?.[PRIMARY_FIELD]}
+              helperText={(errors as any)?.[PRIMARY_FIELD]?.message}
+              margin="normal"
+              fullWidth
+              label={PRIMARY_LABEL}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={modal.close}>Cancel</Button>
+          <Button type="submit" form="create-dummy-form" variant="contained" disabled={formLoading}>
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </List>
+  );
+}
