@@ -65,10 +65,14 @@ subprojects {
 
             //
             implementation("org.springframework:spring-context")
+
+            // TEST
+            testImplementation("org.junit.jupiter:junit-jupiter")
         }
-    }
-    // 테스트 공통 설정
-    tasks.withType<Test> {
-        useJUnitPlatform()
+
+        // 테스트 공통 설정
+        tasks.withType<Test> {
+            useJUnitPlatform()
+        }
     }
 }
