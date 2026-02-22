@@ -31,8 +31,9 @@ public class AdminUseCaseImpl implements AdminUseCase {
     }
 
     @Override
-    public PageResponse<AdminPayload.Res> getPage(int page, int size, String paramQuery) {
-        AdminReaderDto.AdminPage result = adminReader.getAdminViewPage(page, size);
+    public PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                  String paramQuery) {
+        AdminReaderDto.AdminPage result = adminReader.getPage(page, size, sortBy, sortDirection, paramQuery);
         return PageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
                 result.totalElements(),
@@ -40,6 +41,8 @@ public class AdminUseCaseImpl implements AdminUseCase {
                 result.size()
         );
     }
+
+
 
     @Override
     public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req) {

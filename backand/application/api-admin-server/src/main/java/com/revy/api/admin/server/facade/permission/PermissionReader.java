@@ -10,5 +10,5 @@ public interface PermissionReader {
 
     Optional<PermissionReaderDto.PermissionView> getPermissionViewById(UUID permissionId);
 
-    PermissionReaderDto.PermissionPage getPermissionViewPage(int page, int size);
+    PermissionReaderDto.PermissionPage getPage(int page, int size);
 }

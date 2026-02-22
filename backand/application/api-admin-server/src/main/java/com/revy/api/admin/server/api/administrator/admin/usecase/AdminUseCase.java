@@ -10,7 +10,7 @@ public interface AdminUseCase {
 
     AdminPayload.Res get(UUID adminId);
 
-    PageResponse<AdminPayload.Res> getPage(int page, int size, String paramQuery);
+    PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 
     AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req);
 

@@ -10,8 +10,7 @@ public interface PermissionUseCase {
 
     PermissionPayload.Res get(UUID permissionId);
 
-    PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                String paramQuery);
+    PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 
     PermissionPayload.Res update(UUID id, PermissionPayload.UpdateCommandReq req);
 

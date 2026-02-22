@@ -10,5 +10,5 @@ public interface RoleReader {
 
     Optional<RoleReaderDto.RoleView> getRoleViewById(UUID roleId);
 
-    RoleReaderDto.RolePage getRoleViewPage(int page, int size);
+    RoleReaderDto.RolePage getPage(int page, int size);
 }

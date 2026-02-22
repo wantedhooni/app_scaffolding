@@ -18,5 +18,5 @@ public interface AdminReader {
 
     Optional<AdminReaderDto.AdminView> getAdminViewById(UUID adminId);
 
-    AdminReaderDto.AdminPage getAdminViewPage(int page, int size);
+    AdminReaderDto.AdminPage getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 }

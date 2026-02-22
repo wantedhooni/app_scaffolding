@@ -22,7 +22,7 @@ public class AdminApi extends CrudController<AdminPayload.CreateReq, AdminPayloa
     @Override
     protected PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
                                                      String paramQuery) {
-        return adminUseCase.getPage(page, size, paramQuery);
+        return adminUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);
     }
 
     @Override

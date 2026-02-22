@@ -32,7 +32,7 @@ public class PermissionReaderImpl implements PermissionReader {
     }
 
     @Override
-    public PermissionReaderDto.PermissionPage getPermissionViewPage(int page, int size) {
+    public PermissionReaderDto.PermissionPage getPage(int page, int size) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(size, 1);
         PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));

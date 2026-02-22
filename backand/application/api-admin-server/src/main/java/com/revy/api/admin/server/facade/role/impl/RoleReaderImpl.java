@@ -34,7 +34,7 @@ public class RoleReaderImpl implements RoleReader {
     }
 
     @Override
-    public RoleReaderDto.RolePage getRoleViewPage(int page, int size) {
+    public RoleReaderDto.RolePage getPage(int page, int size) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(size, 1);
         PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));

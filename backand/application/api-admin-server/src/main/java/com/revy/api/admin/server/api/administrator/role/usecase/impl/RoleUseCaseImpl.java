@@ -33,7 +33,7 @@ public class RoleUseCaseImpl implements RoleUseCase {
     @Override
     public PageResponse<RolePayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
                                                  String paramQuery) {
-        RoleReaderDto.RolePage result = roleReader.getRoleViewPage(page, size);
+        RoleReaderDto.RolePage result = roleReader.getPage(page, size);
         return PageResponse.of(result.content().stream().map(this::toResponse).toList(), result.totalElements(),
                                result.page(), result.size());
     }

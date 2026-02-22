@@ -33,7 +33,7 @@ public class PermissionUseCaseImpl implements PermissionUseCase {
     @Override
     public PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
                                                        String paramQuery) {
-        PermissionReaderDto.PermissionPage result = permissionReader.getPermissionViewPage(page, size);
+        PermissionReaderDto.PermissionPage result = permissionReader.getPage(page, size);
         return PageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
                 result.totalElements(),
