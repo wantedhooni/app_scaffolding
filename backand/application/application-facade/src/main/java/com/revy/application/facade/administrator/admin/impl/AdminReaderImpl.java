@@ -8,7 +8,6 @@ import com.revy.common.web.api.search.SearchField;
 import com.revy.domain.admin.Admin;
 import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.QAdmin;
-import com.revy.domain.admin.QAdminPermission;
 import com.revy.domain.admin.QAdminRole;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
@@ -48,9 +47,7 @@ public class AdminReaderImpl implements AdminReader {
 
     @Override
     public boolean hasAnySecurityData() {
-        return adminRepository.exists(QAdmin.admin.id.isNotNull()) || roleRepository.exists(
-                QAdminRole.adminRole.id.isNotNull()) || permissionRepository.exists(
-                QAdminPermission.adminPermission.id.isNotNull());
+        return adminRepository.findOne(QAdmin.admin.id.isNotNull()).isPresent();
     }
 
     @Override

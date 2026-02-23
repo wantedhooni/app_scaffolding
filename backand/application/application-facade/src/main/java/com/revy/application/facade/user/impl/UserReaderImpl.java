@@ -33,6 +33,11 @@ public class UserReaderImpl implements UserReader {
         return userRepository.findOne(QUser.user.email.eq(email)).map(this::toAuthUser);
     }
 
+    @Override
+    public boolean hasAnySecurityData() {
+        return userRepository.findOne(QUser.user.id.isNotNull()).isPresent();
+    }
+
     private UserReaderDto.AuthUser toAuthUser(User user) {
         Set<String> roleNames = user.getPermissions().stream().map(Enum::name).collect(Collectors.toSet());
 

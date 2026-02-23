@@ -9,4 +9,6 @@ public interface UserReader {
     Optional<UserReaderDto.AuthUser> getByAuthUserId(UUID userId);
 
     Optional<UserReaderDto.AuthUser> getAuthUserByEmail(String email);
+
+    boolean hasAnySecurityData();
 }
