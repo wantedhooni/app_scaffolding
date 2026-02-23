@@ -144,6 +144,10 @@ cp -R src/app/_dummy-page src/app/domain/products
 ## 6. 2뎁스 메뉴로 넣기(선택)
 부모 메뉴 아래 넣으려면 `meta.parent`를 사용합니다.
 
+주의:
+- 부모 그룹 리소스에는 `list`를 넣지 않는 것을 권장합니다.
+- 부모까지 링크로 만들면 `<a>` 중첩으로 hydration 오류가 발생할 수 있습니다.
+
 ```tsx
 {
   name: "products",
@@ -177,6 +181,7 @@ const resourcePathMap: Record<string, string> = {
 cd frontend/ui-admin
 npx tsc --noEmit
 npm run build
+npm run test:e2e
 ```
 
 ## 9. 빠른 체크리스트
