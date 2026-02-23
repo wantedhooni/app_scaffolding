@@ -4,6 +4,10 @@ plugins {
 
 dependencies {
     implementation(project(":common"))
+    api("org.springframework.boot:spring-boot-starter-security")
+    api("org.springframework:spring-webmvc")
+    api("jakarta.servlet:jakarta.servlet-api")
+
     var jjwtVersion = "0.12.7"
     // JWT
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api

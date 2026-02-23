@@ -1,7 +1,7 @@
 package com.revy.api.admin.server.init;
 
-import com.revy.api.admin.server.facade.administrator.admin.AdminReader;
-import com.revy.api.admin.server.facade.administrator.admin.InitAdminProcessor;
+import com.revy.application.facade.administrator.admin.AdminReader;
+import com.revy.application.facade.administrator.admin.InitAdminProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

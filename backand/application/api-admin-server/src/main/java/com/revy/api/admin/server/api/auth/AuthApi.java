@@ -1,10 +1,9 @@
 package com.revy.api.admin.server.api.auth;
 
 import com.revy.api.admin.server.api.auth.payload.LoginPayload;
-import com.revy.api.admin.server.api.auth.payload.SignupPayload;
 import com.revy.api.admin.server.api.auth.payload.TokenReissuePayload;
 import com.revy.api.admin.server.api.auth.usecase.AuthUseCase;
-import com.revy.api.admin.server.common.ApiResponse;
+import com.revy.common.web.api.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

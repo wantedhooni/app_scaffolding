@@ -2,10 +2,10 @@ package com.revy.api.admin.server.api.administrator.role.usecase.impl;
 
 import com.revy.api.admin.server.api.administrator.role.payload.RolePayload;
 import com.revy.api.admin.server.api.administrator.role.usecase.RoleUseCase;
-import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.administrator.role.RoleProcessor;
-import com.revy.api.admin.server.facade.administrator.role.RoleReader;
-import com.revy.api.admin.server.facade.administrator.role.dto.RoleReaderDto;
+import com.revy.application.facade.administrator.role.RoleProcessor;
+import com.revy.application.facade.administrator.role.RoleReader;
+import com.revy.application.facade.administrator.role.dto.RoleReaderDto;
+import com.revy.common.web.api.response.ApiPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +32,11 @@ public class RoleUseCaseImpl implements RoleUseCase {
     }
 
     @Override
-    public PageResponse<RolePayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                 String paramQuery) {
+    public ApiPageResponse<RolePayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                    String paramQuery) {
         RoleReaderDto.RolePage result = roleReader.getPage(page, size);
-        return PageResponse.of(result.content().stream().map(this::toResponse).toList(), result.totalElements(),
-                               result.page(), result.size());
+        return ApiPageResponse.of(result.content().stream().map(this::toResponse).toList(), result.totalElements(),
+                                  result.page(), result.size());
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.revy.api.admin.server.api.administrator.admin;
 
 import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
 import com.revy.api.admin.server.api.administrator.admin.usecase.AdminUseCase;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 import com.revy.api.admin.server.common.controller.CrudController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class AdminApi extends CrudController<AdminPayload.CreateReq, AdminPayloa
 
 
     @Override
-    protected PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                     String paramQuery) {
+    protected ApiPageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                        String paramQuery) {
         log.info("page: {}, size: {}, sort by: {}, sort direction: {}, paramQuery:{}", page, size, sortBy,
                  sortDirection, paramQuery);
         return adminUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);

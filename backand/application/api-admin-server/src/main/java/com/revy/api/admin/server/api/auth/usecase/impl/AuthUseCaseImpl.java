@@ -1,11 +1,11 @@
 package com.revy.api.admin.server.api.auth.usecase.impl;
 
-import com.revy.api.admin.server.api.auth.payload.SignupPayload;
 import com.revy.api.admin.server.api.auth.payload.LoginPayload;
+import com.revy.api.admin.server.api.auth.payload.SignupPayload;
 import com.revy.api.admin.server.api.auth.payload.TokenReissuePayload;
 import com.revy.api.admin.server.api.auth.usecase.AuthUseCase;
-import com.revy.api.admin.server.facade.administrator.admin.AdminProcessor;
-import com.revy.api.admin.server.facade.administrator.admin.dto.AdminTokenDto;
+import com.revy.application.facade.administrator.admin.AdminProcessor;
+import com.revy.application.facade.administrator.admin.dto.AdminTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package com.revy.api.admin.server.api.administrator.permission;
 
 import com.revy.api.admin.server.api.administrator.permission.payload.PermissionPayload;
 import com.revy.api.admin.server.api.administrator.permission.usecase.PermissionUseCase;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 import com.revy.api.admin.server.common.controller.CrudController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class PermissionApi extends
     private final PermissionUseCase permissionUseCase;
 
     @Override
-    protected PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                          String paramQuery) {
+    protected ApiPageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                             String paramQuery) {
         return permissionUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);
     }
 

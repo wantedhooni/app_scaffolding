@@ -15,12 +15,13 @@ configurations {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":domain:entity"))
+    // implementation(project(":domain:entity"))
+    implementation(project(":application:application-facade"))
     implementation(project(":application:security:jwt"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.6")
 
     // log

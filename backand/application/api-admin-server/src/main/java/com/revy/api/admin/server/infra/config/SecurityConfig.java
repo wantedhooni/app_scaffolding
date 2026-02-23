@@ -1,8 +1,8 @@
 package com.revy.api.admin.server.infra.config;
 
-import com.revy.api.admin.server.infra.CustomAccessDeniedHandler;
-import com.revy.api.admin.server.infra.CustomAuthenticationEntryPoint;
 import com.revy.api.admin.server.infra.filter.JwtAuthenticationFilter;
+import com.revy.security.CustomAccessDeniedHandler;
+import com.revy.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

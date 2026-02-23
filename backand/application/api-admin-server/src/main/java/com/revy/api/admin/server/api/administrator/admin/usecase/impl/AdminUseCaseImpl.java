@@ -2,10 +2,10 @@ package com.revy.api.admin.server.api.administrator.admin.usecase.impl;
 
 import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
 import com.revy.api.admin.server.api.administrator.admin.usecase.AdminUseCase;
-import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.administrator.admin.AdminProcessor;
-import com.revy.api.admin.server.facade.administrator.admin.AdminReader;
-import com.revy.api.admin.server.facade.administrator.admin.dto.AdminReaderDto;
+import com.revy.application.facade.administrator.admin.AdminProcessor;
+import com.revy.application.facade.administrator.admin.AdminReader;
+import com.revy.application.facade.administrator.admin.dto.AdminReaderDto;
+import com.revy.common.web.api.response.ApiPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +26,15 @@ public class AdminUseCaseImpl implements AdminUseCase {
     @Override
     public AdminPayload.Res get(UUID adminId) {
         AdminReaderDto.AdminView admin = adminReader.getAdminViewById(adminId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                                                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         return toResponse(admin);
     }
 
     @Override
-    public PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                  String paramQuery) {
+    public ApiPageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                     String paramQuery) {
         AdminReaderDto.AdminPage result = adminReader.getPage(page, size, sortBy, sortDirection, paramQuery);
-        return PageResponse.of(
+        return ApiPageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
                 result.totalElements(),
                 result.page(),

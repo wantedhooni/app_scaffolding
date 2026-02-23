@@ -2,7 +2,7 @@ package com.revy.api.admin.server.api.administrator.role;
 
 import com.revy.api.admin.server.api.administrator.role.payload.RolePayload;
 import com.revy.api.admin.server.api.administrator.role.usecase.RoleUseCase;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 import com.revy.api.admin.server.common.controller.CrudController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class RoleApi extends
 
 
     @Override
-    protected PageResponse<RolePayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                    String paramQuery) {
+    protected ApiPageResponse<RolePayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                       String paramQuery) {
         return roleUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);
     }
 

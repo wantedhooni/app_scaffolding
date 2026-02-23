@@ -1,7 +1,7 @@
 package com.revy.api.admin.server.common.controller;
 
-import com.revy.api.admin.server.common.ApiResponse;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public abstract class CrudController<
     }
 
     @GetMapping({"/search"})
-    public ResponseEntity<ApiResponse<PageResponse<RES>>> search(
+    public ResponseEntity<ApiResponse<ApiPageResponse<RES>>> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String sortBy,
@@ -54,7 +54,7 @@ public abstract class CrudController<
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    protected abstract PageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
+    protected abstract ApiPageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 
     protected abstract RES doCreate(CREQ req);
 

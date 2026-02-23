@@ -1,7 +1,7 @@
 package com.revy.api.admin.server.api.administrator.admin.usecase;
 
 import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ public interface AdminUseCase {
 
     AdminPayload.Res get(UUID adminId);
 
-    PageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
+    ApiPageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 
     AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req);
 

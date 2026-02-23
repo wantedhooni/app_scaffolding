@@ -2,7 +2,7 @@ package com.revy.api.admin.server.api.user;
 
 import com.revy.api.admin.server.api.user.payload.UserPayload;
 import com.revy.api.admin.server.api.user.usecase.UserUseCase;
-import com.revy.api.admin.server.common.PageResponse;
+import com.revy.common.web.api.response.ApiPageResponse;
 import com.revy.api.admin.server.common.controller.CrudController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ public class UserApi extends
     private final UserUseCase userUseCase;
 
     @Override
-    protected PageResponse<UserPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                    String paramQuery) {
+    protected ApiPageResponse<UserPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                       String paramQuery) {
         return userUseCase.getPage(page, size, sortBy, sortDirection, paramQuery);
     }
 

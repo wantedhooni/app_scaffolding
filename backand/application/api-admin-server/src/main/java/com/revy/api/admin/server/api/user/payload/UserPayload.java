@@ -1,6 +1,7 @@
 package com.revy.api.admin.server.api.user.payload;
 
-import com.revy.domain.user.enums.UserStatus;
+
+import com.revy.common.domain.enums.user.UserStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

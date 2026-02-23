@@ -1,8 +1,8 @@
 package com.revy.api.admin.server.infra.advice;
 
 
-import com.revy.api.admin.server.common.ApiError;
-import com.revy.api.admin.server.common.ApiResponse;
+import com.revy.common.web.api.response.ApiError;
+import com.revy.common.web.api.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -2,10 +2,10 @@ package com.revy.api.admin.server.api.administrator.permission.usecase.impl;
 
 import com.revy.api.admin.server.api.administrator.permission.payload.PermissionPayload;
 import com.revy.api.admin.server.api.administrator.permission.usecase.PermissionUseCase;
-import com.revy.api.admin.server.common.PageResponse;
-import com.revy.api.admin.server.facade.administrator.permission.PermissionProcessor;
-import com.revy.api.admin.server.facade.administrator.permission.PermissionReader;
-import com.revy.api.admin.server.facade.administrator.permission.dto.PermissionReaderDto;
+import com.revy.application.facade.administrator.permission.PermissionProcessor;
+import com.revy.application.facade.administrator.permission.PermissionReader;
+import com.revy.application.facade.administrator.permission.dto.PermissionReaderDto;
+import com.revy.common.web.api.response.ApiPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +26,15 @@ public class PermissionUseCaseImpl implements PermissionUseCase {
     @Override
     public PermissionPayload.Res get(UUID permissionId) {
         PermissionReaderDto.PermissionView permission = permissionReader.getPermissionViewById(permissionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+                                                                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         return toResponse(permission);
     }
 
     @Override
-    public PageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
-                                                       String paramQuery) {
+    public ApiPageResponse<PermissionPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+                                                          String paramQuery) {
         PermissionReaderDto.PermissionPage result = permissionReader.getPage(page, size);
-        return PageResponse.of(
+        return ApiPageResponse.of(
                 result.content().stream().map(this::toResponse).toList(),
                 result.totalElements(),
                 result.page(),
