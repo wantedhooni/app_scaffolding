@@ -84,7 +84,7 @@ public class User extends BaseEntity {
         this.permissions.remove(permission);
     }
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private User(String email, String password, String firstName, String lastName, String nickName, UserStatus status,
                  int failCount, boolean enabled) {
         this.email = email;
