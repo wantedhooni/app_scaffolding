@@ -23,7 +23,7 @@ public class AuthApi {
 
     private final AuthUseCase authUseCase;
 
-    @Operation(summary = "로그인", description = "로그인 후 액세스/리프레시 토큰을 발급한다.")
+    @Operation(summary = "회원 가입", description = "회원 가입을 한다.")
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupPayload.Res>> signup(@Valid @RequestBody SignupPayload.Req req){
         return ResponseEntity.ok(ApiResponse.ok(authUseCase.signup(req)));

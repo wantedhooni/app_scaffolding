@@ -47,5 +47,5 @@ dependencies {
 
 tasks.withType<BootJar> {
     enabled = true
-    mainClass.set("com.revy.api.admin.server.ApiAdminServerApplication")
+    mainClass.set("com.revy.api.server.ApiServiceServerApplication")
 }
