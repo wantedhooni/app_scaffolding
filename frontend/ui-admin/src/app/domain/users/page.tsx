@@ -7,13 +7,14 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE } from "./constants";
+import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META } from "./constants";
 
 export default function DummyListTemplatePage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
     resource: RESOURCE,
+    meta: RESOURCE_META,
     onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
       const value = searchKeyword.trim();
 
@@ -40,6 +41,7 @@ export default function DummyListTemplatePage() {
   } = useModalForm({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
       action: "create",
     },
   });

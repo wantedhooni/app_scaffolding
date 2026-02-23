@@ -15,7 +15,16 @@ import { useList } from "@refinedev/core";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
-import { EMAIL_FIELD, EMAIL_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE, ROLE_RESOURCE } from "../../constants";
+import {
+  EMAIL_FIELD,
+  EMAIL_LABEL,
+  PASSWORD_FIELD,
+  PASSWORD_LABEL,
+  RESOURCE,
+  RESOURCE_META,
+  ROLE_RESOURCE,
+  ROLE_RESOURCE_META,
+} from "../../constants";
 
 export default function AdminEditPage() {
   const {
@@ -27,11 +36,13 @@ export default function AdminEditPage() {
   } = useForm({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
     },
   });
 
   const { result: roleList } = useList({
     resource: ROLE_RESOURCE,
+    meta: ROLE_RESOURCE_META,
     pagination: {
       currentPage: 1,
       pageSize: 100,

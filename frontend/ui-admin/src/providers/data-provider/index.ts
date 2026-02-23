@@ -1,6 +1,17 @@
 "use client";
 
-import type { DataProvider, CrudFilters, CrudSorting } from "@refinedev/core";
+import type {
+  DataProvider,
+  BaseRecord,
+  CrudFilters,
+  CrudSorting,
+  GetListParams,
+  GetOneParams,
+  GetManyParams,
+  CreateParams,
+  UpdateParams,
+  DeleteOneParams,
+} from "@refinedev/core";
 
 import { apiClient } from "@providers/http-client";
 
@@ -15,25 +26,13 @@ type ApiResponse<T> = {
 type PageResponse<T> = {
   content: T[];
   totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
+};
+
+type ResourceMeta = {
+  apiPath?: string;
 };
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
-
-const resourcePathMap: Record<string, string> = {
-  admin: "/api/admin",
-  admins: "/api/admin",
-  role: "/api/role",
-  roles: "/api/role",
-  permission: "/api/permission",
-  permissions: "/api/permission",
-};
-
-const resolveResourcePath = (resource: string): string => {
-  return resourcePathMap[resource] ?? `/api/${resource}`;
-};
 
 const unwrap = <T>(payload: ApiResponse<T>): T => {
   if (!payload.success) {
@@ -41,6 +40,24 @@ const unwrap = <T>(payload: ApiResponse<T>): T => {
   }
 
   return payload.data;
+};
+
+const extractApiPath = (meta: unknown): string | undefined => {
+  if (!meta || typeof meta !== "object") {
+    return undefined;
+  }
+
+  const apiPath = (meta as ResourceMeta).apiPath;
+  if (typeof apiPath !== "string") {
+    return undefined;
+  }
+
+  const trimmed = apiPath.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
+
+const resolveResourcePath = (resource: string, meta: unknown): string => {
+  return extractApiPath(meta) ?? `/api/${resource}`;
 };
 
 const toSortParams = (sorters?: CrudSorting) => {
@@ -57,6 +74,14 @@ const toSortParams = (sorters?: CrudSorting) => {
     sortBy: firstSorter.field,
     sortDirection: firstSorter.order?.toUpperCase(),
   };
+};
+
+const toPageParam = (current?: number): number => {
+  return Math.max(0, (current ?? 1) - 1);
+};
+
+const toPageSize = (pageSize?: number): number => {
+  return pageSize ?? 20;
 };
 
 const toParamQuery = (filters?: CrudFilters): string | undefined => {
@@ -86,26 +111,44 @@ const toParamQuery = (filters?: CrudFilters): string | undefined => {
   return tokens.join(",");
 };
 
+const getData = async <T>(url: string, params?: Record<string, unknown>): Promise<T> => {
+  const response = await apiClient.get<ApiResponse<T>>(url, { params });
+
+  return unwrap(response.data);
+};
+
+const postData = async <T>(url: string, body?: unknown): Promise<T> => {
+  const response = await apiClient.post<ApiResponse<T>>(url, body);
+  return unwrap(response.data);
+};
+
 export const dataProvider: DataProvider = {
   getApiUrl: () => API_BASE_URL,
 
-  getList: async ({ resource, pagination, sorters, filters }) => {
-    const path = resolveResourcePath(resource);
-    const current = pagination?.currentPage ?? 1;
-    const page = Math.max(0, current - 1);
-    const size = pagination?.pageSize ?? 20;
+  getList: async <TData extends BaseRecord = BaseRecord>(
+    params: GetListParams,
+  ) => {
+    const { resource, pagination, sorters, filters, meta } = params;
+    const path = resolveResourcePath(resource, meta);
+    const normalizedPagination = pagination as
+      | { current?: number; currentPage?: number; pageSize?: number }
+      | undefined;
+    const current = normalizedPagination?.current ?? normalizedPagination?.currentPage;
+    const page = toPageParam(current);
+    const size = toPageSize(normalizedPagination?.pageSize);
     const { sortBy, sortDirection } = toSortParams(sorters);
+    const queryParams = {
+      page,
+      size,
+      sortBy,
+      sortDirection,
+      paramQuery: toParamQuery(filters),
+    };
 
-    const response = await apiClient.get<ApiResponse<PageResponse<any>>>(
+    const response = await apiClient.get<ApiResponse<PageResponse<TData>>>(
       `${path}/search`,
       {
-        params: {
-          page,
-          size,
-          sortBy,
-          sortDirection,
-          paramQuery: toParamQuery(filters),
-        },
+        params: queryParams,
       },
     );
 
@@ -117,62 +160,62 @@ export const dataProvider: DataProvider = {
     };
   },
 
-  getOne: async ({ resource, id }) => {
-    const path = resolveResourcePath(resource);
-    const response = await apiClient.get<ApiResponse<any>>(`${path}/${id}`);
+  getOne: async <TData extends BaseRecord = BaseRecord>(params: GetOneParams) => {
+    const { resource, id, meta } = params;
+    const path = resolveResourcePath(resource, meta);
+    const data = await getData<TData>(`${path}/${id}`);
 
     return {
-      data: unwrap(response.data),
+      data,
     };
   },
 
-  getMany: async ({ resource, ids }) => {
-    const path = resolveResourcePath(resource);
+  getMany: async <TData extends BaseRecord = BaseRecord>(params: GetManyParams) => {
+    const { resource, ids, meta } = params;
+    const path = resolveResourcePath(resource, meta);
 
-    const responses = await Promise.all(
-      ids.map(async (id) => {
-        const response = await apiClient.get<ApiResponse<any>>(`${path}/${id}`);
-        return unwrap(response.data);
-      }),
-    );
+    const data = await Promise.all(ids.map((id) => getData<TData>(`${path}/${id}`)));
 
     return {
-      data: responses,
+      data,
     };
   },
 
-  create: async ({ resource, variables }) => {
-    const path = resolveResourcePath(resource);
-    const response = await apiClient.post<ApiResponse<any>>(
-      `${path}/create`,
-      variables,
-    );
+  create: async <TData extends BaseRecord = BaseRecord, TVariables = {}>(
+    params: CreateParams<TVariables>,
+  ) => {
+    const { resource, variables, meta } = params;
+    const path = resolveResourcePath(resource, meta);
+    const data = await postData<TData>(`${path}/create`, variables);
 
     return {
-      data: unwrap(response.data),
+      data,
     };
   },
 
-  update: async ({ resource, id, variables }) => {
-    const path = resolveResourcePath(resource);
-    const response = await apiClient.post<ApiResponse<any>>(
-      `${path}/${id}/update`,
-      variables,
-    );
+  update: async <TData extends BaseRecord = BaseRecord, TVariables = {}>(
+    params: UpdateParams<TVariables>,
+  ) => {
+    const { resource, id, variables, meta } = params;
+    const path = resolveResourcePath(resource, meta);
+    const data = await postData<TData>(`${path}/${id}/update`, variables);
 
     return {
-      data: unwrap(response.data),
+      data,
     };
   },
 
-  deleteOne: async ({ resource, id }) => {
-    const path = resolveResourcePath(resource);
-    await apiClient.post<ApiResponse<void>>(`${path}/${id}/delete`);
+  deleteOne: async <TData extends BaseRecord = BaseRecord, TVariables = {}>(
+    params: DeleteOneParams<TVariables>,
+  ) => {
+    const { resource, id, meta } = params;
+    const path = resolveResourcePath(resource, meta);
+    await postData<void>(`${path}/${id}/delete`);
 
     return {
       data: {
         id,
-      } as any,
+      } as TData,
     };
   },
 

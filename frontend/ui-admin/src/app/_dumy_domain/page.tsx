@@ -7,13 +7,14 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, SEARCH_FIELDS, SEARCH_PLACEHOLDER } from "./constants";
+import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META } from "./constants";
 
 export default function DummyListTemplatePage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
     resource: RESOURCE,
+    meta: RESOURCE_META,
     onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
       const value = searchKeyword.trim();
 
@@ -21,11 +22,13 @@ export default function DummyListTemplatePage() {
         return [];
       }
 
-      return SEARCH_FIELDS.map((field) => ({
-        field,
-        operator: "contains" as const,
-        value,
-      }));
+      return [
+        {
+          field: "keyword",
+          operator: "contains",
+          value,
+        },
+      ];
     },
   });
 
@@ -38,6 +41,7 @@ export default function DummyListTemplatePage() {
   } = useModalForm({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
       action: "create",
     },
   });
@@ -77,7 +81,6 @@ export default function DummyListTemplatePage() {
         onSearch={handleSearch}
         onCreate={modal.show}
         createLabel={`Create ${ENTITY_LABEL}`}
-        keywordPlaceholder={SEARCH_PLACEHOLDER}
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />
       <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">

@@ -3,7 +3,7 @@
 import { Box, TextField } from "@mui/material";
 import { Create } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { EMAIL_FIELD, EMAIL_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE } from "../constants";
+import { EMAIL_FIELD, EMAIL_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE, RESOURCE_META } from "../constants";
 
 export default function AdminCreatePage() {
   const {
@@ -14,6 +14,7 @@ export default function AdminCreatePage() {
   } = useForm({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
     },
   });
 

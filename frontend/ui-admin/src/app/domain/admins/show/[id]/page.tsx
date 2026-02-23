@@ -3,11 +3,12 @@
 import { Stack, Typography } from "@mui/material";
 import { useShow } from "@refinedev/core";
 import { Show, TextFieldComponent as TextField } from "@refinedev/mui";
-import { EMAIL_FIELD, EMAIL_LABEL, RESOURCE } from "../../constants";
+import { EMAIL_FIELD, EMAIL_LABEL, RESOURCE, RESOURCE_META } from "../../constants";
 
 export default function AdminShowPage() {
   const { query } = useShow({
     resource: RESOURCE,
+    meta: RESOURCE_META,
   });
 
   const { data, isLoading } = query;

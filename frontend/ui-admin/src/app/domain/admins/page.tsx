@@ -13,13 +13,14 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { EMAIL_FIELD, EMAIL_LABEL, ENTITY_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE } from "./constants";
+import { EMAIL_FIELD, EMAIL_LABEL, ENTITY_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE, RESOURCE_META } from "./constants";
 
 export default function AdminListPage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, setFilters, filters, tableQuery } = useDataGrid({
     resource: RESOURCE,
+    meta: RESOURCE_META,
   });
 
   const {
@@ -31,6 +32,7 @@ export default function AdminListPage() {
   } = useModalForm({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
       action: "create",
     },
   });

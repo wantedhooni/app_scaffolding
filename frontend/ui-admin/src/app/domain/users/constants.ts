@@ -1,5 +1,7 @@
 // Resource name used by Refine hooks and API mapping (must match resources[].name).
 export const RESOURCE = "users";
+export const API_PATH = "/api/user";
+export const RESOURCE_META = { apiPath: API_PATH } as const;
 
 // Human-readable entity label for button/dialog text.
 export const ENTITY_LABEL = "User";
