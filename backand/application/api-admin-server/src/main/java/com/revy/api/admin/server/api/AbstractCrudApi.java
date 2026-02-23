@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.UUID;
 
 @Slf4j(access = AccessLevel.PROTECTED)
-public abstract class CrudController<
-        CREQ,
-        UREQ,
-        RES> {
+public abstract class CrudController<CREQ, UREQ, RES> {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<RES>> create(@Valid @RequestBody CREQ req) {
@@ -31,16 +28,12 @@ public abstract class CrudController<
     }
 
     @GetMapping({"/search"})
-    public ResponseEntity<ApiResponse<ApiPageResponse<RES>>> search(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDirection,
-            @RequestParam(required = false) String paramQuery
-    ) {
-        return ResponseEntity.ok(ApiResponse.ok(
-                getPage(page, size, sortBy, sortDirection, paramQuery)
-        ));
+    public ResponseEntity<ApiResponse<ApiPageResponse<RES>>> search(@RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "20") int size,
+                                                                    @RequestParam(required = false) String sortBy,
+                                                                    @RequestParam(defaultValue = "DESC") String sortDirection,
+                                                                    @RequestParam(required = false) String paramQuery) {
+        return ResponseEntity.ok(ApiResponse.ok(getPage(page, size, sortBy, sortDirection, paramQuery)));
     }
 
     @PostMapping("/{id}/update")
@@ -54,7 +47,8 @@ public abstract class CrudController<
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    protected abstract ApiPageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
+    protected abstract ApiPageResponse<RES> getPage(int page, int size, String sortBy, String sortDirection,
+                                                    String paramQuery);
 
     protected abstract RES doCreate(CREQ req);
 
