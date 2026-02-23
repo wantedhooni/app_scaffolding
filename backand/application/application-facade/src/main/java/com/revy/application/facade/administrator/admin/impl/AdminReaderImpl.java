@@ -47,7 +47,7 @@ public class AdminReaderImpl implements AdminReader {
 
     @Override
     public boolean hasAnySecurityData() {
-        return adminRepository.findOne(QAdmin.admin.id.isNotNull()).isPresent();
+        return adminRepository.findAll(QAdmin.admin.id.isNotNull(), PageRequest.of(1, 1)).getTotalElements() > 0;
     }
 
     @Override

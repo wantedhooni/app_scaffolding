@@ -8,6 +8,7 @@ import com.revy.domain.user.User;
 import com.revy.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class UserReaderImpl implements UserReader {
 
     @Override
     public boolean hasAnySecurityData() {
-        return userRepository.findOne(QUser.user.id.isNotNull()).isPresent();
+        return  userRepository.findAll(QUser.user.id.isNotNull(), PageRequest.of(1, 1)).getTotalElements() > 0;
     }
 
     private UserReaderDto.AuthUser toAuthUser(User user) {
