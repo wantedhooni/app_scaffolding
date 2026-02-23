@@ -96,7 +96,7 @@ public class AdminProcessorImpl implements AdminProcessor {
 
     @Override
     @Transactional
-    public void updateAdmin(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds) {
+    public void update(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds) {
         AdminReaderDto.AuthAdmin current = adminReader.getAuthAdminById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -138,7 +138,7 @@ public class AdminProcessorImpl implements AdminProcessor {
 
     @Override
     @Transactional
-    public void deleteAdmin(UUID adminId) {
+    public void delete(UUID adminId) {
         if (adminReader.getAuthAdminById(adminId).isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
         }

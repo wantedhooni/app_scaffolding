@@ -1,4 +1,4 @@
-package com.revy.application.facade.administrator.admin;
+package com.revy.application.facade;
 
 import java.util.Optional;
 import java.util.UUID;

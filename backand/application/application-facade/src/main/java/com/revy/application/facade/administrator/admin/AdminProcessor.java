@@ -15,7 +15,7 @@ public interface AdminProcessor {
 
     AdminTokenDto.Result reissue(String refreshToken);
 
-    void updateAdmin(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds);
+    void update(UUID adminId, String email, String rawPassword, AdminStatus status, Boolean enabled, List<String> roleIds);
 
-    void deleteAdmin(UUID adminId);
+    void delete(UUID adminId);
 }

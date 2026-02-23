@@ -10,7 +10,6 @@ import com.revy.domain.admin.AdminRole;
 import com.revy.domain.admin.QAdmin;
 import com.revy.domain.admin.QAdminRole;
 import com.revy.domain.admin.repository.AdminRepository;
-import com.revy.domain.admin.repository.PermissionRepository;
 import com.revy.domain.admin.repository.RoleRepository;
 import com.revy.utils.querydsl.ExpressionUtil;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,6 @@ public class AdminReaderImpl implements AdminReader {
 
     private final AdminRepository adminRepository;
     private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
 
     @Override
     public boolean hasAnySecurityData() {
@@ -72,7 +70,7 @@ public class AdminReaderImpl implements AdminReader {
     }
 
     @Override
-    public Optional<AdminReaderDto.AdminView> getAdminViewById(UUID adminId) {
+    public Optional<AdminReaderDto.AdminView> getViewById(UUID adminId) {
         return adminRepository.findOne(QAdmin.admin.id.eq(adminId)).map(this::toAdminView);
     }
 
@@ -81,12 +79,13 @@ public class AdminReaderImpl implements AdminReader {
                                             String paramQuery) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(size, 1);
+
         Sort sort = resolveSort(sortBy, sortDirection);
         BooleanBuilder predicate = buildSearchPredicate(paramQuery);
         log.debug("predicate:{}", predicate);
+
         PageRequest pageable = PageRequest.of(safePage, safeSize, sort);
         Page<Admin> result = adminRepository.findAll(predicate, pageable);
-        log.debug("result.getTotalElements():{}", result.getTotalElements());
         return new AdminReaderDto.AdminPage(result.getContent().stream().map(this::toAdminView).toList(),
                                             result.getTotalElements(), safePage, safeSize);
     }

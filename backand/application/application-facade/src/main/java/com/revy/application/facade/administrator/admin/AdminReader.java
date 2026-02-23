@@ -1,12 +1,13 @@
 package com.revy.application.facade.administrator.admin;
 
 
+import com.revy.application.facade.ViewReader;
 import com.revy.application.facade.administrator.admin.dto.AdminReaderDto;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AdminReader {
+public interface AdminReader extends ViewReader<AdminReaderDto.AdminPage, AdminReaderDto.AdminView> {
     boolean hasAnySecurityData();
 
     boolean existsByEmail(String email);
@@ -17,7 +18,5 @@ public interface AdminReader {
 
     Optional<AdminReaderDto.AuthAdmin> getAuthAdminById(UUID adminId);
 
-    Optional<AdminReaderDto.AdminView> getAdminViewById(UUID adminId);
 
-    AdminReaderDto.AdminPage getPage(int page, int size, String sortBy, String sortDirection, String paramQuery);
 }
