@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if(!userReader.hasAnySecurityData()){
-
+            initUserProcessor.initializeSecurityData();
         }
 
         log.info("DataInitializer end");
