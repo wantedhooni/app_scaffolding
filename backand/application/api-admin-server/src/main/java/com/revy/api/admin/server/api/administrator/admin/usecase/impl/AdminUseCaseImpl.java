@@ -25,7 +25,7 @@ public class AdminUseCaseImpl implements AdminUseCase {
 
     @Override
     public AdminPayload.Res get(UUID adminId) {
-        AdminReaderDto.AdminView admin = adminReader.getAdminViewById(adminId)
+        AdminReaderDto.AdminView admin = adminReader.getViewById(adminId)
                                                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         return toResponse(admin);
     }
@@ -46,13 +46,13 @@ public class AdminUseCaseImpl implements AdminUseCase {
 
     @Override
     public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req) {
-        adminProcessor.updateAdmin(adminId, req.email(), req.password(), req.status(), req.enabled(), req.roleIds());
+        adminProcessor.update(adminId, req.email(), req.password(), req.status(), req.enabled(), req.roleIds());
         return get(adminId);
     }
 
     @Override
     public AdminPayload.DeleteRes delete(UUID adminId) {
-        adminProcessor.deleteAdmin(adminId);
+        adminProcessor.delete(adminId);
         return new AdminPayload.DeleteRes(adminId.toString(), true, "사용자가 삭제되었습니다.");
     }
 

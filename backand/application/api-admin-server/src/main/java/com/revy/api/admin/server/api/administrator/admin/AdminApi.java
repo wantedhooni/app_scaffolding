@@ -3,7 +3,7 @@ package com.revy.api.admin.server.api.administrator.admin;
 import com.revy.api.admin.server.api.administrator.admin.payload.AdminPayload;
 import com.revy.api.admin.server.api.administrator.admin.usecase.AdminUseCase;
 import com.revy.common.web.api.response.ApiPageResponse;
-import com.revy.api.admin.server.common.controller.CrudController;
+import com.revy.api.admin.server.api.AbstractCrudApi;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Tag(name = "사용자 관리 API", description = "사용자 CRUD")
-public class AdminApi extends CrudController<AdminPayload.CreateReq, AdminPayload.UpdateCommandReq, AdminPayload.Res> {
+public class AdminApi extends AbstractCrudApi<AdminPayload.CreateReq, AdminPayload.UpdateCommandReq, AdminPayload.Res> {
     private final AdminUseCase adminUseCase;
 
 

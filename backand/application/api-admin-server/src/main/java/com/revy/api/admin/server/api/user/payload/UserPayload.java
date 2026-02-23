@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Set;
+
 public class UserPayload {
     @Schema(name = "UserPayload.CreateReq")
     public record CreateReq(
@@ -41,6 +43,7 @@ public class UserPayload {
             String lastName,
             String nickName,
             UserStatus status,
+            Set<String> permissions,
             int failCount,
             boolean enabled
     ) {

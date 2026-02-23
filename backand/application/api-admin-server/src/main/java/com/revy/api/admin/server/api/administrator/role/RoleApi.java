@@ -3,7 +3,7 @@ package com.revy.api.admin.server.api.administrator.role;
 import com.revy.api.admin.server.api.administrator.role.payload.RolePayload;
 import com.revy.api.admin.server.api.administrator.role.usecase.RoleUseCase;
 import com.revy.common.web.api.response.ApiPageResponse;
-import com.revy.api.admin.server.common.controller.CrudController;
+import com.revy.api.admin.server.api.AbstractCrudApi;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "역할 관리 API", description = "역할 CRUD")
 public class RoleApi extends
-        CrudController<RolePayload.CreateCommandReq, RolePayload.UpdateCommandReq, RolePayload.Res> {
+        AbstractCrudApi<RolePayload.CreateCommandReq, RolePayload.UpdateCommandReq, RolePayload.Res> {
     private final RoleUseCase roleUseCase;
 
 

@@ -1,4 +1,4 @@
-package com.revy.api.admin.server.common.controller;
+package com.revy.api.admin.server.api;
 
 import com.revy.common.web.api.response.ApiResponse;
 import com.revy.common.web.api.response.ApiPageResponse;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.UUID;
 
 @Slf4j(access = AccessLevel.PROTECTED)
-public abstract class CrudController<CREQ, UREQ, RES> {
+public abstract class AbstractCrudApi<CREQ, UREQ, RES> {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<RES>> create(@Valid @RequestBody CREQ req) {
