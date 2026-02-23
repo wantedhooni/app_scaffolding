@@ -2,20 +2,42 @@
 
 웹 어드민 프로젝트 모노레포입니다.
 
-- `backand`: Spring Boot API 서버
+- `backand`: Spring Boot 멀티모듈 백엔드
 - `frontend/ui-admin`: Next.js + Refine 기반 어드민 UI
 - `infra/db`: 로컬 DB 도커 컴포즈
 - `script`: 실행 보조 스크립트
 
-## Backend Modules
+## Project Structure
+
+```text
+.
+├── backand
+│   ├── common
+│   ├── domain
+│   │   ├── entity-base
+│   │   └── entity
+│   └── application
+│       ├── application-facade
+│       ├── security/jwt
+│       ├── api-admin-server
+│       └── api-service-server
+├── frontend/ui-admin
+├── infra/db
+├── script
+└── docs
+```
+
+## Backend Modules (Gradle)
 
 `backand/settings.gradle.kts` 기준 모듈:
 
 - `:common`
 - `:domain:entity-base`
 - `:domain:entity`
+- `:application:application-facade`
 - `:application:security:jwt`
 - `:application:api-admin-server`
+- `:application:api-service-server`
 
 ## JWT Filter Reuse
 
@@ -59,6 +81,13 @@ cd backand
 ./gradlew :application:api-admin-server:bootRun
 ```
 
+`api-service-server`를 실행하려면:
+
+```bash
+cd backand
+./gradlew :application:api-service-server:bootRun
+```
+
 ### 3) Frontend 실행
 
 ```bash
@@ -76,6 +105,13 @@ npm run dev
 
 - Frontend: `http://localhost:3000`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+## Backend Validation
+
+```bash
+cd backand
+./gradlew :application:security:jwt:compileJava :application:api-admin-server:compileJava
+```
 
 ## Frontend Validation
 
