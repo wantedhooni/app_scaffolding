@@ -1,6 +1,6 @@
 package com.revy.domain.admin;
 
-import com.revy.domain.admin.enums.AdminStatus;
+import com.revy.common.domain.enums.admin.AdminStatus;
 import com.revy.domain.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
