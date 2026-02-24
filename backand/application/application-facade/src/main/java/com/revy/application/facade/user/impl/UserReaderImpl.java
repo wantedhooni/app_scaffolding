@@ -72,10 +72,8 @@ public class UserReaderImpl implements UserReader {
 
         Page<User> result = userRepository.findAll(predicate, pageable);
 
-        return new UserReaderDto.UserPage(
-                result.getContent().stream().map(this::toView).toList(),
-                result.getTotalElements(), safePage, safeSize
-        );
+        return new UserReaderDto.UserPage(result.getContent().stream().map(this::toView).toList(),
+                                          result.getTotalElements(), safePage, safeSize);
     }
 
     private BooleanBuilder buildSearchPredicate(String paramQuery) {
@@ -126,14 +124,16 @@ public class UserReaderImpl implements UserReader {
 
     private UserReaderDto.UserView toView(User user) {
         Set<String> permissions = user.getPermissions().stream().map(Enum::name).collect(Collectors.toSet());
-        return new UserReaderDto.UserView(
-                user.getId(),
-                user.getEmail(),
-                user.getStatus(),
-                user.isEnabled(),
-                permissions,
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
+        return new UserReaderDto.UserView(user.getId(),
+                                          user.getEmail(),
+                                          user.getFirstName(),
+                                          user.getLastName(),
+                                          user.getNickName(),
+                                          user.getStatus(),
+                                          user.getFailCount(),
+                                          user.isEnabled(),
+                                          permissions,
+                                          user.getCreatedAt(),
+                                          user.getUpdatedAt());
     }
 }

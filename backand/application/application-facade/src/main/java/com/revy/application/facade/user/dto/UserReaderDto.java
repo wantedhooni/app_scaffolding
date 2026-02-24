@@ -16,20 +16,25 @@ public class UserReaderDto {
             UserStatus status,
             boolean enabled,
             Set<String> roleNames
-    ){
+    ) {
 
     }
 
     public record UserView(
             UUID id,
             String email,
+            String firstName,
+            String lastName,
+            String nickName,
             UserStatus status,
+            int failCount,
             boolean enabled,
             Set<String> permissions,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {
     }
+
     public record UserPage(
             List<UserReaderDto.UserView> content,
             long totalElements,
