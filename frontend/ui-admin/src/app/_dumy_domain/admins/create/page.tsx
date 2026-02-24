@@ -3,9 +3,9 @@
 import { Box, TextField } from "@mui/material";
 import { Create } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { DESCRIPTION_FIELD, DESCRIPTION_LABEL, NAME_FIELD, NAME_LABEL, RESOURCE, RESOURCE_META } from "../constants";
+import { EMAIL_FIELD, EMAIL_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE, RESOURCE_META } from "../constants";
 
-export default function RoleCreatePage() {
+export default function AdminCreatePage() {
   const {
     saveButtonProps,
     refineCore: { formLoading },
@@ -22,22 +22,22 @@ export default function RoleCreatePage() {
     <Create isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Box component="form" sx={{ display: "flex", flexDirection: "column" }} autoComplete="off">
         <TextField
-          {...register(NAME_FIELD, { required: `${NAME_FIELD} is required` })}
-          error={!!(errors as any)?.[NAME_FIELD]}
-          helperText={(errors as any)?.[NAME_FIELD]?.message}
+          {...register(EMAIL_FIELD, { required: `${EMAIL_FIELD} is required` })}
+          error={!!(errors as any)?.[EMAIL_FIELD]}
+          helperText={(errors as any)?.[EMAIL_FIELD]?.message}
           margin="normal"
           fullWidth
-          label={NAME_LABEL}
+          label={EMAIL_LABEL}
+          type="email"
         />
         <TextField
-          {...register(DESCRIPTION_FIELD)}
-          error={!!(errors as any)?.[DESCRIPTION_FIELD]}
-          helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
+          {...register(PASSWORD_FIELD, { required: `${PASSWORD_FIELD} is required` })}
+          error={!!(errors as any)?.[PASSWORD_FIELD]}
+          helperText={(errors as any)?.[PASSWORD_FIELD]?.message}
           margin="normal"
           fullWidth
-          multiline
-          minRows={3}
-          label={DESCRIPTION_LABEL}
+          label={PASSWORD_LABEL}
+          type="password"
         />
       </Box>
     </Create>

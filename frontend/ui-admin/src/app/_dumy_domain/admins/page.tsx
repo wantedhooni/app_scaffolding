@@ -1,15 +1,37 @@
 "use client";
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { DeleteButton, EditButton, List, ShowButton, useDataGrid } from "@refinedev/mui";
+import type { BaseRecord, HttpError } from "@refinedev/core";
+import {
+  DeleteButton,
+  EditButton,
+  List,
+  SaveButton,
+  ShowButton,
+  useDataGrid,
+} from "@refinedev/mui";
 import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META, createListColumns } from "./constants";
+import {
+  EMAIL_FIELD,
+  EMAIL_LABEL,
+  ENTITY_LABEL,
+  PASSWORD_FIELD,
+  PASSWORD_LABEL,
+  RESOURCE,
+  RESOURCE_META,
+  createListColumns,
+} from "./constants";
 
-export default function DummyListTemplatePage() {
+type CreateAdminFormValues = {
+  [EMAIL_FIELD]: string;
+  [PASSWORD_FIELD]: string;
+};
+
+export default function AdminListPage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
@@ -28,17 +50,22 @@ export default function DummyListTemplatePage() {
           operator: "contains",
           value,
         },
+        {
+          field: EMAIL_FIELD,
+          operator: "contains",
+          value,
+        },
       ];
     },
   });
 
   const {
     modal,
+    saveButtonProps,
     register,
     handleSubmit,
     formState: { errors },
-    refineCore: { formLoading },
-  } = useModalForm({
+  } = useModalForm<BaseRecord, HttpError, CreateAdminFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
       meta: RESOURCE_META,
@@ -52,13 +79,17 @@ export default function DummyListTemplatePage() {
 
   const columns = React.useMemo(
     () =>
-      createListColumns(({ row }) => (
-        <>
-          <EditButton hideText recordItemId={row.id} />
-          <ShowButton hideText recordItemId={row.id} />
-          <DeleteButton hideText recordItemId={row.id} />
-        </>
-      )),
+      createListColumns(
+        ({ value }) =>
+          value ? <Chip color="success" label="Y" size="small" /> : <Chip color="default" label="N" size="small" />,
+        ({ row }) => (
+          <>
+            <EditButton hideText recordItemId={row.id} />
+            <ShowButton hideText recordItemId={row.id} />
+            <DeleteButton hideText recordItemId={row.id} />
+          </>
+        ),
+      ),
     [],
   );
 
@@ -69,7 +100,6 @@ export default function DummyListTemplatePage() {
         onKeywordChange={setKeyword}
         onSearch={handleSearch}
         onCreate={modal.show}
-        createLabel={`Create ${ENTITY_LABEL}`}
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />
       <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">
@@ -77,26 +107,36 @@ export default function DummyListTemplatePage() {
         <DialogContent>
           <Box
             component="form"
-            id="create-dummy-form"
+            id="create-entity-form"
             onSubmit={handleSubmit(modal.submit)}
             sx={{ mt: 1, display: "flex", flexDirection: "column" }}
             autoComplete="off"
           >
             <TextField
-              {...register(PRIMARY_FIELD, { required: `${PRIMARY_FIELD} is required` })}
-              error={!!(errors as any)?.[PRIMARY_FIELD]}
-              helperText={(errors as any)?.[PRIMARY_FIELD]?.message}
+              {...register(EMAIL_FIELD, { required: `${EMAIL_FIELD} is required` })}
+              error={!!errors[EMAIL_FIELD]}
+              helperText={errors[EMAIL_FIELD]?.message}
               margin="normal"
               fullWidth
-              label={PRIMARY_LABEL}
+              label={EMAIL_LABEL}
+              type="email"
+            />
+            <TextField
+              {...register(PASSWORD_FIELD, { required: `${PASSWORD_FIELD} is required` })}
+              error={!!errors[PASSWORD_FIELD]}
+              helperText={errors[PASSWORD_FIELD]?.message}
+              margin="normal"
+              fullWidth
+              label={PASSWORD_LABEL}
+              type="password"
             />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={modal.close}>Cancel</Button>
-          <Button type="submit" form="create-dummy-form" variant="contained" disabled={formLoading}>
+          <SaveButton {...saveButtonProps} type="submit" form="create-entity-form">
             Create
-          </Button>
+          </SaveButton>
         </DialogActions>
       </Dialog>
     </List>

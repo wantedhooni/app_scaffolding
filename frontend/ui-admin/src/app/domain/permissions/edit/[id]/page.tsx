@@ -3,6 +3,7 @@
 import { Box, TextField } from "@mui/material";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
+import { CODE_FIELD, CODE_LABEL, DESCRIPTION_FIELD, DESCRIPTION_LABEL, RESOURCE, RESOURCE_META } from "../../constants";
 
 export default function PermissionEditPage() {
   const {
@@ -12,7 +13,8 @@ export default function PermissionEditPage() {
     formState: { errors },
   } = useForm({
     refineCoreProps: {
-      resource: "permissions",
+      resource: RESOURCE,
+      meta: RESOURCE_META,
     },
   });
 
@@ -20,22 +22,22 @@ export default function PermissionEditPage() {
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Box component="form" sx={{ display: "flex", flexDirection: "column" }} autoComplete="off">
         <TextField
-          {...register("code")}
-          error={!!(errors as any)?.code}
-          helperText={(errors as any)?.code?.message}
+          {...register(CODE_FIELD)}
+          error={!!(errors as any)?.[CODE_FIELD]}
+          helperText={(errors as any)?.[CODE_FIELD]?.message}
           margin="normal"
           fullWidth
-          label="Code"
+          label={CODE_LABEL}
         />
         <TextField
-          {...register("description")}
-          error={!!(errors as any)?.description}
-          helperText={(errors as any)?.description?.message}
+          {...register(DESCRIPTION_FIELD)}
+          error={!!(errors as any)?.[DESCRIPTION_FIELD]}
+          helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
           margin="normal"
           fullWidth
           multiline
           minRows={3}
-          label="Description"
+          label={DESCRIPTION_LABEL}
         />
       </Box>
     </Edit>

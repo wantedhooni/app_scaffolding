@@ -1,0 +1,134 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - navigation:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - link "Refine Project" [ref=e16] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e17]:
+              - img [ref=e18]
+              - heading "Refine Project" [level=6] [ref=e21]
+          - button [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+        - list [ref=e26]:
+          - link "Dashboard" [ref=e27] [cursor=pointer]:
+            - /url: /
+            - button "Dashboard" [ref=e28]:
+              - img [ref=e30]
+              - generic [ref=e33]: Dashboard
+          - button "User" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e40]: User
+            - img [ref=e41]
+          - generic [ref=e43]:
+            - button "SYSTEM" [ref=e44] [cursor=pointer]:
+              - img [ref=e46]
+              - generic [ref=e49]: SYSTEM
+              - img [ref=e50]
+            - generic [ref=e55]:
+              - link "Admins" [ref=e56] [cursor=pointer]:
+                - /url: /domain/admins
+                - img [ref=e58]
+                - generic [ref=e61]: Admins
+              - link "Roles" [ref=e62] [cursor=pointer]:
+                - /url: /domain/roles
+                - img [ref=e64]
+                - generic [ref=e67]: Roles
+              - link "Permissions" [ref=e68] [cursor=pointer]:
+                - /url: /domain/permissions
+                - img [ref=e70]
+                - generic [ref=e73]: Permissions
+          - button "Logout" [ref=e74] [cursor=pointer]:
+            - img [ref=e76]
+            - generic [ref=e79]: Logout
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - generic [ref=e84]:
+          - button [ref=e85] [cursor=pointer]:
+            - img [ref=e86]
+          - generic [ref=e88]:
+            - heading "019c7a4c-a71c-7909-a508-cd95b48ebd5f" [level=6] [ref=e89]
+            - img [ref=e91]
+      - main [ref=e93]:
+        - generic [ref=e94]:
+          - navigation "breadcrumb" [ref=e95]:
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - paragraph [ref=e99]: SYSTEM
+              - listitem [ref=e100]: /
+              - listitem [ref=e101]:
+                - link "Admins" [ref=e103] [cursor=pointer]:
+                  - /url: /domain/admins
+          - heading "Admins" [level=5] [ref=e106]
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e110]:
+                - textbox "Keyword" [ref=e111]: sysadmin
+                - group
+              - button "Search" [active] [ref=e112] [cursor=pointer]: Search
+              - button "Create" [ref=e113] [cursor=pointer]
+            - generic [ref=e114]:
+              - grid [ref=e115]:
+                - row "ID Email Status Enabled Roles Actions" [ref=e116]:
+                  - columnheader "ID" [ref=e117] [cursor=pointer]:
+                    - generic [ref=e119]: ID
+                    - generic [ref=e120]:
+                      - img
+                  - columnheader "Email" [ref=e121] [cursor=pointer]:
+                    - generic [ref=e123]: Email
+                    - generic [ref=e124]:
+                      - img
+                  - columnheader "Status" [ref=e125] [cursor=pointer]:
+                    - generic [ref=e127]: Status
+                    - generic [ref=e128]:
+                      - img
+                  - columnheader "Enabled" [ref=e129] [cursor=pointer]:
+                    - generic [ref=e131]: Enabled
+                    - generic [ref=e132]:
+                      - img
+                  - columnheader "Roles" [ref=e133] [cursor=pointer]:
+                    - generic [ref=e135]: Roles
+                    - generic [ref=e136]:
+                      - img
+                  - columnheader "Actions" [ref=e137]:
+                    - generic [ref=e139]: Actions
+                    - generic [ref=e140]:
+                      - img
+                - rowgroup [ref=e141]:
+                  - row "019c7a4c-a71c-7909-a508-cd95b48ebd5f sysadmin@system.dev ACTIVE Y ROLE_ADMIN" [ref=e142]:
+                    - gridcell "019c7a4c-a71c-7909-a508-cd95b48ebd5f" [ref=e143]
+                    - gridcell "sysadmin@system.dev" [ref=e144]
+                    - gridcell "ACTIVE" [ref=e145]
+                    - gridcell "Y" [ref=e146]:
+                      - generic [ref=e148]: "Y"
+                    - gridcell "ROLE_ADMIN" [ref=e149]
+                    - gridcell [ref=e150]:
+                      - link [ref=e151] [cursor=pointer]:
+                        - /url: /domain/admins/edit/019c7a4c-a71c-7909-a508-cd95b48ebd5f
+                        - button [ref=e152]:
+                          - img [ref=e153]
+                      - link [ref=e155] [cursor=pointer]:
+                        - /url: /domain/admins/show/019c7a4c-a71c-7909-a508-cd95b48ebd5f
+                        - button [ref=e156]:
+                          - img [ref=e157]
+                      - button [ref=e160] [cursor=pointer]:
+                        - img [ref=e161]
+              - generic [ref=e167]:
+                - paragraph [ref=e168]: "Rows per page:"
+                - generic [ref=e169]:
+                  - 'combobox "Rows per page: 25" [ref=e170] [cursor=pointer]': "25"
+                  - textbox: "25"
+                  - img
+                - paragraph [ref=e171]: 1–1 of 1
+                - generic [ref=e172]:
+                  - button "Go to previous page" [disabled]:
+                    - img
+                  - button "Go to next page" [disabled]:
+                    - img
+```

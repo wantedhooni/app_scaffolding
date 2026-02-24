@@ -2,10 +2,12 @@
 
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import type { BaseRecord, HttpError } from "@refinedev/core";
 import {
   DeleteButton,
   EditButton,
   List,
+  SaveButton,
   ShowButton,
   useDataGrid,
 } from "@refinedev/mui";
@@ -24,21 +26,46 @@ import {
   createListColumns,
 } from "./constants";
 
+type CreateAdminFormValues = {
+  [EMAIL_FIELD]: string;
+  [PASSWORD_FIELD]: string;
+};
+
 export default function AdminListPage() {
   const [keyword, setKeyword] = React.useState("");
 
-  const { dataGridProps, setFilters, filters, tableQuery } = useDataGrid({
+  const { dataGridProps, search } = useDataGrid({
     resource: RESOURCE,
     meta: RESOURCE_META,
+    onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
+      const value = searchKeyword.trim();
+
+      if (!value) {
+        return [];
+      }
+
+      return [
+        {
+          field: "keyword",
+          operator: "contains",
+          value,
+        },
+        {
+          field: EMAIL_FIELD,
+          operator: "contains",
+          value,
+        },
+      ];
+    },
   });
 
   const {
     modal,
+    saveButtonProps,
     register,
     handleSubmit,
     formState: { errors },
-    refineCore: { formLoading },
-  } = useModalForm({
+  } = useModalForm<BaseRecord, HttpError, CreateAdminFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
       meta: RESOURCE_META,
@@ -47,29 +74,8 @@ export default function AdminListPage() {
   });
 
   const handleSearch = React.useCallback(() => {
-    const value = keyword.trim();
-    const nextFilters = value
-      ? [
-          {
-            field: "keyword",
-            operator: "contains" as const,
-            value,
-          },
-          {
-            field: EMAIL_FIELD,
-            operator: "contains" as const,
-            value,
-          },
-        ]
-      : [];
-
-    if (JSON.stringify(filters) === JSON.stringify(nextFilters)) {
-      tableQuery.refetch();
-      return;
-    }
-
-    setFilters(nextFilters, "replace");
-  }, [filters, keyword, setFilters, tableQuery]);
+    search({ keyword });
+  }, [keyword, search]);
 
   const columns = React.useMemo(
     () =>
@@ -108,8 +114,8 @@ export default function AdminListPage() {
           >
             <TextField
               {...register(EMAIL_FIELD, { required: `${EMAIL_FIELD} is required` })}
-              error={!!(errors as any)?.[EMAIL_FIELD]}
-              helperText={(errors as any)?.[EMAIL_FIELD]?.message}
+              error={!!errors[EMAIL_FIELD]}
+              helperText={errors[EMAIL_FIELD]?.message}
               margin="normal"
               fullWidth
               label={EMAIL_LABEL}
@@ -117,8 +123,8 @@ export default function AdminListPage() {
             />
             <TextField
               {...register(PASSWORD_FIELD, { required: `${PASSWORD_FIELD} is required` })}
-              error={!!(errors as any)?.[PASSWORD_FIELD]}
-              helperText={(errors as any)?.[PASSWORD_FIELD]?.message}
+              error={!!errors[PASSWORD_FIELD]}
+              helperText={errors[PASSWORD_FIELD]?.message}
               margin="normal"
               fullWidth
               label={PASSWORD_LABEL}
@@ -128,9 +134,9 @@ export default function AdminListPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={modal.close}>Cancel</Button>
-          <Button type="submit" form="create-entity-form" variant="contained" disabled={formLoading}>
+          <SaveButton {...saveButtonProps} type="submit" form="create-entity-form">
             Create
-          </Button>
+          </SaveButton>
         </DialogActions>
       </Dialog>
     </List>

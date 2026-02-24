@@ -3,10 +3,12 @@
 import { Stack, Typography } from "@mui/material";
 import { useShow } from "@refinedev/core";
 import { Show, TextFieldComponent as TextField } from "@refinedev/mui";
+import { CODE_FIELD, CODE_LABEL, DESCRIPTION_FIELD, DESCRIPTION_LABEL, RESOURCE, RESOURCE_META } from "../../constants";
 
 export default function PermissionShowPage() {
   const { query } = useShow({
-    resource: "permissions",
+    resource: RESOURCE,
+    meta: RESOURCE_META,
   });
 
   const { data, isLoading } = query;
@@ -18,11 +20,11 @@ export default function PermissionShowPage() {
         <Typography variant="body1" fontWeight="bold">ID</Typography>
         <TextField value={record?.id} />
 
-        <Typography variant="body1" fontWeight="bold">Code</Typography>
-        <TextField value={record?.code} />
+        <Typography variant="body1" fontWeight="bold">{CODE_LABEL}</Typography>
+        <TextField value={record?.[CODE_FIELD]} />
 
-        <Typography variant="body1" fontWeight="bold">Description</Typography>
-        <TextField value={record?.description} />
+        <Typography variant="body1" fontWeight="bold">{DESCRIPTION_LABEL}</Typography>
+        <TextField value={record?.[DESCRIPTION_FIELD]} />
       </Stack>
     </Show>
   );

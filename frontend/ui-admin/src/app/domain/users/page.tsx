@@ -2,12 +2,15 @@
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { DeleteButton, EditButton, List, ShowButton, useDataGrid } from "@refinedev/mui";
+import type { BaseRecord, HttpError } from "@refinedev/core";
+import { DeleteButton, EditButton, List, SaveButton, ShowButton, useDataGrid } from "@refinedev/mui";
 import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
 import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META, createListColumns } from "./constants";
+
+type CreateUserFormValues = Record<typeof PRIMARY_FIELD, string>;
 
 export default function DummyListTemplatePage() {
   const [keyword, setKeyword] = React.useState("");
@@ -34,11 +37,11 @@ export default function DummyListTemplatePage() {
 
   const {
     modal,
+    saveButtonProps,
     register,
     handleSubmit,
     formState: { errors },
-    refineCore: { formLoading },
-  } = useModalForm({
+  } = useModalForm<BaseRecord, HttpError, CreateUserFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
       meta: RESOURCE_META,
@@ -68,7 +71,6 @@ export default function DummyListTemplatePage() {
         keyword={keyword}
         onKeywordChange={setKeyword}
         onSearch={handleSearch}
-        onCreate={() => {}}
         createVisible={false}
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />
@@ -84,8 +86,8 @@ export default function DummyListTemplatePage() {
           >
             <TextField
               {...register(PRIMARY_FIELD, { required: `${PRIMARY_FIELD} is required` })}
-              error={!!(errors as any)?.[PRIMARY_FIELD]}
-              helperText={(errors as any)?.[PRIMARY_FIELD]?.message}
+              error={!!errors[PRIMARY_FIELD]}
+              helperText={errors[PRIMARY_FIELD]?.message}
               margin="normal"
               fullWidth
               label={PRIMARY_LABEL}
@@ -94,9 +96,9 @@ export default function DummyListTemplatePage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={modal.close}>Cancel</Button>
-          <Button type="submit" form="create-dummy-form" variant="contained" disabled={formLoading}>
+          <SaveButton {...saveButtonProps} type="submit" form="create-dummy-form">
             Create
-          </Button>
+          </SaveButton>
         </DialogActions>
       </Dialog>
     </List>

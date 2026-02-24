@@ -3,6 +3,7 @@
 import { Box, TextField } from "@mui/material";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
+import { DESCRIPTION_FIELD, DESCRIPTION_LABEL, NAME_FIELD, NAME_LABEL, RESOURCE, RESOURCE_META } from "../../constants";
 
 export default function RoleEditPage() {
   const {
@@ -12,7 +13,8 @@ export default function RoleEditPage() {
     formState: { errors },
   } = useForm({
     refineCoreProps: {
-      resource: "roles",
+      resource: RESOURCE,
+      meta: RESOURCE_META,
     },
   });
 
@@ -20,22 +22,22 @@ export default function RoleEditPage() {
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Box component="form" sx={{ display: "flex", flexDirection: "column" }} autoComplete="off">
         <TextField
-          {...register("name")}
-          error={!!(errors as any)?.name}
-          helperText={(errors as any)?.name?.message}
+          {...register(NAME_FIELD)}
+          error={!!(errors as any)?.[NAME_FIELD]}
+          helperText={(errors as any)?.[NAME_FIELD]?.message}
           margin="normal"
           fullWidth
-          label="Name"
+          label={NAME_LABEL}
         />
         <TextField
-          {...register("description")}
-          error={!!(errors as any)?.description}
-          helperText={(errors as any)?.description?.message}
+          {...register(DESCRIPTION_FIELD)}
+          error={!!(errors as any)?.[DESCRIPTION_FIELD]}
+          helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
           margin="normal"
           fullWidth
           multiline
           minRows={3}
-          label="Description"
+          label={DESCRIPTION_LABEL}
         />
       </Box>
     </Edit>

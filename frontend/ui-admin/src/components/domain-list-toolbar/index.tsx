@@ -40,7 +40,7 @@ export const DomainListToolbar: React.FC<DomainListToolbarProps> = ({
       <Button variant="outlined" onClick={onSearch}>
         Search
       </Button>
-      {createVisible ? (
+      {createVisible && onCreate ? (
         <Button variant="contained" onClick={onCreate}>
           {createLabel}
         </Button>

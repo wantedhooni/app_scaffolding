@@ -2,10 +2,12 @@
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import type { BaseRecord, HttpError } from "@refinedev/core";
 import {
   DeleteButton,
   EditButton,
   List,
+  SaveButton,
   ShowButton,
   useDataGrid,
 } from "@refinedev/mui";
@@ -20,14 +22,21 @@ import {
   NAME_FIELD,
   NAME_LABEL,
   RESOURCE,
+  RESOURCE_META,
   createListColumns,
 } from "./constants";
+
+type CreateRoleFormValues = {
+  [NAME_FIELD]: string;
+  [DESCRIPTION_FIELD]: string;
+};
 
 export default function RoleListPage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
     resource: RESOURCE,
+    meta: RESOURCE_META,
     onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
       const value = searchKeyword.trim();
 
@@ -47,13 +56,14 @@ export default function RoleListPage() {
 
   const {
     modal,
+    saveButtonProps,
     register,
     handleSubmit,
     formState: { errors },
-    refineCore: { formLoading },
-  } = useModalForm({
+  } = useModalForm<BaseRecord, HttpError, CreateRoleFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
+      meta: RESOURCE_META,
       action: "create",
     },
   });
@@ -95,16 +105,16 @@ export default function RoleListPage() {
           >
             <TextField
               {...register(NAME_FIELD, { required: `${NAME_FIELD} is required` })}
-              error={!!(errors as any)?.[NAME_FIELD]}
-              helperText={(errors as any)?.[NAME_FIELD]?.message}
+              error={!!errors[NAME_FIELD]}
+              helperText={errors[NAME_FIELD]?.message}
               margin="normal"
               fullWidth
               label={NAME_LABEL}
             />
             <TextField
               {...register(DESCRIPTION_FIELD)}
-              error={!!(errors as any)?.[DESCRIPTION_FIELD]}
-              helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
+              error={!!errors[DESCRIPTION_FIELD]}
+              helperText={errors[DESCRIPTION_FIELD]?.message}
               margin="normal"
               fullWidth
               multiline
@@ -115,9 +125,9 @@ export default function RoleListPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={modal.close}>Cancel</Button>
-          <Button type="submit" form="create-role-form" variant="contained" disabled={formLoading}>
+          <SaveButton {...saveButtonProps} type="submit" form="create-role-form">
             Create
-          </Button>
+          </SaveButton>
         </DialogActions>
       </Dialog>
     </List>
