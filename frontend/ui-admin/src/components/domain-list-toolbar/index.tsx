@@ -6,7 +6,7 @@ import React from "react";
 type DomainListToolbarProps = {
   keyword: string;
   onKeywordChange: (value: string) => void;
-  onSearch: () => void;
+  onSearch: (keyword: string) => void;
   onCreate?: () => void;
   createVisible?: boolean;
   createLabel?: string;
@@ -30,14 +30,14 @@ export const DomainListToolbar: React.FC<DomainListToolbarProps> = ({
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             event.preventDefault();
-            onSearch();
+            onSearch(keyword);
           }
         }}
         placeholder={keywordPlaceholder}
         size="small"
         fullWidth
       />
-      <Button variant="outlined" onClick={onSearch}>
+      <Button variant="outlined" onClick={() => onSearch(keyword)}>
         Search
       </Button>
       {createVisible && onCreate ? (

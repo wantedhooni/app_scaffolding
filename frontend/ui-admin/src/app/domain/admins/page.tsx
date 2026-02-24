@@ -46,11 +46,6 @@ export default function AdminListPage() {
 
       return [
         {
-          field: "keyword",
-          operator: "contains",
-          value,
-        },
-        {
           field: EMAIL_FIELD,
           operator: "contains",
           value,
@@ -73,9 +68,13 @@ export default function AdminListPage() {
     },
   });
 
-  const handleSearch = React.useCallback(() => {
-    search({ keyword });
-  }, [keyword, search]);
+  const handleSearch = React.useCallback(
+    (nextKeyword: string) => {
+      setKeyword(nextKeyword);
+      search({ keyword: nextKeyword });
+    },
+    [search],
+  );
 
   const columns = React.useMemo(
     () =>
@@ -93,6 +92,17 @@ export default function AdminListPage() {
     [],
   );
 
+  const filteredRows = React.useMemo(() => {
+    const rows = Array.isArray(dataGridProps.rows) ? dataGridProps.rows : [];
+    const value = keyword.trim().toLowerCase();
+
+    if (!value) {
+      return rows;
+    }
+
+    return rows.filter((row) => String((row as Record<string, unknown>).email ?? "").toLowerCase().includes(value));
+  }, [dataGridProps.rows, keyword]);
+
   return (
     <List headerButtons={() => null}>
       <DomainListToolbar
@@ -101,7 +111,7 @@ export default function AdminListPage() {
         onSearch={handleSearch}
         onCreate={modal.show}
       />
-      <DataGrid {...dataGridProps} columns={columns} autoHeight />
+      <DataGrid {...dataGridProps} rows={filteredRows} columns={columns} autoHeight />
       <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">
         <DialogTitle>{`Create ${ENTITY_LABEL}`}</DialogTitle>
         <DialogContent>

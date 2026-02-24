@@ -49,9 +49,13 @@ export default function DummyListTemplatePage() {
     },
   });
 
-  const handleSearch = React.useCallback(() => {
-    search({ keyword });
-  }, [keyword, search]);
+  const handleSearch = React.useCallback(
+    (nextKeyword: string) => {
+      setKeyword(nextKeyword);
+      search({ keyword: nextKeyword });
+    },
+    [search],
+  );
 
   const columns = React.useMemo(
     () =>
