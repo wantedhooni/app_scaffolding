@@ -39,6 +39,17 @@ export const PRIMARY_LABEL = "Name";
 - `RESOURCE_META`: `data-provider`가 `meta.apiPath`를 읽어서 API 경로를 결정할 때 사용.
 - `ENTITY_LABEL`, `PRIMARY_*`: 화면 표시/폼 바인딩용.
 
+현재 도메인(`admins`, `roles`, `permissions`)은 아래처럼 동일한 구조를 사용합니다.
+
+```ts
+export const RESOURCE = "roles"; // resources[].name과 동일
+export const API_PATH = "/api/role";
+export const RESOURCE_META = { apiPath: API_PATH } as const;
+```
+
+주의:
+- `RESOURCE`와 API 경로가 다를 수 있으므로(`roles` vs `/api/role`) 반드시 `RESOURCE_META`를 함께 유지합니다.
+
 ## 4. 페이지 훅에 meta 전달 확인
 아래 훅에서 `resource`와 함께 `meta: RESOURCE_META`를 전달해야 `API_PATH`가 적용됩니다.
 
@@ -79,7 +90,7 @@ const { dataGridProps } = useDataGrid({
 - `meta.apiPath`가 있으면 그 경로를 사용
 - 없으면 기본값 `/api/${resource}` 사용
 
-즉, 리소스명과 API 경로가 다를 때는 `constants.ts`의 `API_PATH`만 맞추면 됩니다.
+즉, 리소스명과 API 경로가 다를 때는 `constants.ts`에서 `API_PATH`와 `RESOURCE_META`를 함께 맞춰야 합니다.
 
 ## 7. 검증
 
@@ -88,6 +99,9 @@ cd frontend/ui-admin
 npx tsc --noEmit
 npm run lint
 ```
+
+참고:
+- `npm run lint`는 현재 `eslint .`를 사용합니다.
 
 ## 8. 빠른 체크리스트
 - 템플릿 복사 완료 (`_dumy_domain` -> 신규 경로)
