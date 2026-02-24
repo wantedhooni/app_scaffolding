@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   DeleteButton,
   EditButton,
@@ -13,12 +13,21 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
+import {
+  CODE_FIELD,
+  CODE_LABEL,
+  DESCRIPTION_FIELD,
+  DESCRIPTION_LABEL,
+  ENTITY_LABEL,
+  RESOURCE,
+  createListColumns,
+} from "./constants";
 
 export default function PermissionListPage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
-    resource: "permissions",
+    resource: RESOURCE,
     onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
       const value = searchKeyword.trim();
 
@@ -44,7 +53,7 @@ export default function PermissionListPage() {
     refineCore: { formLoading },
   } = useModalForm({
     refineCoreProps: {
-      resource: "permissions",
+      resource: RESOURCE,
       action: "create",
     },
   });
@@ -53,27 +62,15 @@ export default function PermissionListPage() {
     search({ keyword });
   }, [keyword, search]);
 
-  const columns = React.useMemo<GridColDef[]>(
-    () => [
-      { field: "id", headerName: "ID", minWidth: 260, flex: 1 },
-      { field: "code", headerName: "Code", minWidth: 200, flex: 1 },
-      { field: "description", headerName: "Description", minWidth: 260, flex: 1 },
-      {
-        field: "actions",
-        headerName: "Actions",
-        align: "right",
-        headerAlign: "right",
-        minWidth: 140,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <>
-            <EditButton hideText recordItemId={row.id} />
-            <ShowButton hideText recordItemId={row.id} />
-            <DeleteButton hideText recordItemId={row.id} />
-          </>
-        ),
-      },
-    ],
+  const columns = React.useMemo(
+    () =>
+      createListColumns(({ row }) => (
+        <>
+          <EditButton hideText recordItemId={row.id} />
+          <ShowButton hideText recordItemId={row.id} />
+          <DeleteButton hideText recordItemId={row.id} />
+        </>
+      )),
     [],
   );
 
@@ -87,7 +84,7 @@ export default function PermissionListPage() {
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />
       <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">
-        <DialogTitle>Create Permission</DialogTitle>
+        <DialogTitle>{`Create ${ENTITY_LABEL}`}</DialogTitle>
         <DialogContent>
           <Box
             component="form"
@@ -97,22 +94,22 @@ export default function PermissionListPage() {
             autoComplete="off"
           >
             <TextField
-              {...register("code", { required: "code is required" })}
-              error={!!(errors as any)?.code}
-              helperText={(errors as any)?.code?.message}
+              {...register(CODE_FIELD, { required: `${CODE_FIELD} is required` })}
+              error={!!(errors as any)?.[CODE_FIELD]}
+              helperText={(errors as any)?.[CODE_FIELD]?.message}
               margin="normal"
               fullWidth
-              label="Code"
+              label={CODE_LABEL}
             />
             <TextField
-              {...register("description")}
-              error={!!(errors as any)?.description}
-              helperText={(errors as any)?.description?.message}
+              {...register(DESCRIPTION_FIELD)}
+              error={!!(errors as any)?.[DESCRIPTION_FIELD]}
+              helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
               margin="normal"
               fullWidth
               multiline
               minRows={3}
-              label="Description"
+              label={DESCRIPTION_LABEL}
             />
           </Box>
         </DialogContent>

@@ -105,28 +105,6 @@ export default async function RootLayout({
                           canDelete: true,
                         },
                       },
-                      {
-                        name: "categories",
-                        list: "/categories",
-                        create: "/categories/create",
-                        edit: "/categories/edit/:id",
-                        show: "/categories/show/:id",
-                        meta: {
-                          label: "Categories",
-                          canDelete: true,
-                        },
-                      },
-                      {
-                        name: "blog-posts",
-                        list: "/blog-posts",
-                        create: "/blog-posts/create",
-                        edit: "/blog-posts/edit/:id",
-                        show: "/blog-posts/show/:id",
-                        meta: {
-                          label: "Blog Posts",
-                          canDelete: true,
-                        },
-                      },
                     ]}
                     options={{
                       syncWithLocation: false,

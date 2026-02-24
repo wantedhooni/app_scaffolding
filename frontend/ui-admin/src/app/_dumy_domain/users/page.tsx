@@ -1,13 +1,13 @@
 "use client";
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { DeleteButton, EditButton, List, ShowButton, useDataGrid } from "@refinedev/mui";
 import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META } from "./constants";
+import { ENTITY_LABEL, PRIMARY_FIELD, PRIMARY_LABEL, RESOURCE, RESOURCE_META, createListColumns } from "./constants";
 
 export default function DummyListTemplatePage() {
   const [keyword, setKeyword] = React.useState("");
@@ -50,26 +50,15 @@ export default function DummyListTemplatePage() {
     search({ keyword });
   }, [keyword, search]);
 
-  const columns = React.useMemo<GridColDef[]>(
-    () => [
-      { field: "id", headerName: "ID", minWidth: 220, flex: 1 },
-      { field: PRIMARY_FIELD, headerName: PRIMARY_LABEL, minWidth: 220, flex: 1 },
-      {
-        field: "actions",
-        headerName: "Actions",
-        align: "right",
-        headerAlign: "right",
-        minWidth: 140,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <>
-            <EditButton hideText recordItemId={row.id} />
-            <ShowButton hideText recordItemId={row.id} />
-            <DeleteButton hideText recordItemId={row.id} />
-          </>
-        ),
-      },
-    ],
+  const columns = React.useMemo(
+    () =>
+      createListColumns(({ row }) => (
+        <>
+          <EditButton hideText recordItemId={row.id} />
+          <ShowButton hideText recordItemId={row.id} />
+          <DeleteButton hideText recordItemId={row.id} />
+        </>
+      )),
     [],
   );
 

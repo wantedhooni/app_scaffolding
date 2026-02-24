@@ -7,7 +7,8 @@ type DomainListToolbarProps = {
   keyword: string;
   onKeywordChange: (value: string) => void;
   onSearch: () => void;
-  onCreate: () => void;
+  onCreate?: () => void;
+  createVisible?: boolean;
   createLabel?: string;
   keywordPlaceholder?: string;
 };
@@ -17,6 +18,7 @@ export const DomainListToolbar: React.FC<DomainListToolbarProps> = ({
   onKeywordChange,
   onSearch,
   onCreate,
+  createVisible = true,
   createLabel = "Create",
   keywordPlaceholder = "Keyword",
 }) => {
@@ -38,9 +40,11 @@ export const DomainListToolbar: React.FC<DomainListToolbarProps> = ({
       <Button variant="outlined" onClick={onSearch}>
         Search
       </Button>
-      <Button variant="contained" onClick={onCreate}>
-        {createLabel}
-      </Button>
+      {createVisible ? (
+        <Button variant="contained" onClick={onCreate}>
+          {createLabel}
+        </Button>
+      ) : null}
     </Stack>
   );
 };

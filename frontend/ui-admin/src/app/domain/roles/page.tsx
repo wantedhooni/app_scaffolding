@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   DeleteButton,
   EditButton,
@@ -13,12 +13,21 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
+import {
+  DESCRIPTION_FIELD,
+  DESCRIPTION_LABEL,
+  ENTITY_LABEL,
+  NAME_FIELD,
+  NAME_LABEL,
+  RESOURCE,
+  createListColumns,
+} from "./constants";
 
 export default function RoleListPage() {
   const [keyword, setKeyword] = React.useState("");
 
   const { dataGridProps, search } = useDataGrid({
-    resource: "roles",
+    resource: RESOURCE,
     onSearch: ({ keyword: searchKeyword }: { keyword: string }) => {
       const value = searchKeyword.trim();
 
@@ -44,7 +53,7 @@ export default function RoleListPage() {
     refineCore: { formLoading },
   } = useModalForm({
     refineCoreProps: {
-      resource: "roles",
+      resource: RESOURCE,
       action: "create",
     },
   });
@@ -53,33 +62,15 @@ export default function RoleListPage() {
     search({ keyword });
   }, [keyword, search]);
 
-  const columns = React.useMemo<GridColDef[]>(
-    () => [
-      { field: "id", headerName: "ID", minWidth: 260, flex: 1 },
-      { field: "name", headerName: "Name", minWidth: 180, flex: 1 },
-      { field: "description", headerName: "Description", minWidth: 220, flex: 1 },
-      {
-        field: "admins",
-        headerName: "Admins",
-        minWidth: 120,
-        valueGetter: (_, row) => (Array.isArray(row?.admins) ? row.admins.length : 0),
-      },
-      {
-        field: "actions",
-        headerName: "Actions",
-        align: "right",
-        headerAlign: "right",
-        minWidth: 140,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <>
-            <EditButton hideText recordItemId={row.id} />
-            <ShowButton hideText recordItemId={row.id} />
-            <DeleteButton hideText recordItemId={row.id} />
-          </>
-        ),
-      },
-    ],
+  const columns = React.useMemo(
+    () =>
+      createListColumns(({ row }) => (
+        <>
+          <EditButton hideText recordItemId={row.id} />
+          <ShowButton hideText recordItemId={row.id} />
+          <DeleteButton hideText recordItemId={row.id} />
+        </>
+      )),
     [],
   );
 
@@ -93,7 +84,7 @@ export default function RoleListPage() {
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />
       <Dialog open={modal.visible} onClose={modal.close} fullWidth maxWidth="sm">
-        <DialogTitle>Create Role</DialogTitle>
+        <DialogTitle>{`Create ${ENTITY_LABEL}`}</DialogTitle>
         <DialogContent>
           <Box
             component="form"
@@ -103,22 +94,22 @@ export default function RoleListPage() {
             autoComplete="off"
           >
             <TextField
-              {...register("name", { required: "name is required" })}
-              error={!!(errors as any)?.name}
-              helperText={(errors as any)?.name?.message}
+              {...register(NAME_FIELD, { required: `${NAME_FIELD} is required` })}
+              error={!!(errors as any)?.[NAME_FIELD]}
+              helperText={(errors as any)?.[NAME_FIELD]?.message}
               margin="normal"
               fullWidth
-              label="Name"
+              label={NAME_LABEL}
             />
             <TextField
-              {...register("description")}
-              error={!!(errors as any)?.description}
-              helperText={(errors as any)?.description?.message}
+              {...register(DESCRIPTION_FIELD)}
+              error={!!(errors as any)?.[DESCRIPTION_FIELD]}
+              helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
               margin="normal"
               fullWidth
               multiline
               minRows={3}
-              label="Description"
+              label={DESCRIPTION_LABEL}
             />
           </Box>
         </DialogContent>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   DeleteButton,
   EditButton,
@@ -13,7 +13,16 @@ import { useModalForm } from "@refinedev/react-hook-form";
 import React from "react";
 
 import { DomainListToolbar } from "@components/domain-list-toolbar";
-import { EMAIL_FIELD, EMAIL_LABEL, ENTITY_LABEL, PASSWORD_FIELD, PASSWORD_LABEL, RESOURCE, RESOURCE_META } from "./constants";
+import {
+  EMAIL_FIELD,
+  EMAIL_LABEL,
+  ENTITY_LABEL,
+  PASSWORD_FIELD,
+  PASSWORD_LABEL,
+  RESOURCE,
+  RESOURCE_META,
+  createListColumns,
+} from "./constants";
 
 export default function AdminListPage() {
   const [keyword, setKeyword] = React.useState("");
@@ -62,56 +71,19 @@ export default function AdminListPage() {
     setFilters(nextFilters, "replace");
   }, [filters, keyword, setFilters, tableQuery]);
 
-  const columns = React.useMemo<GridColDef[]>(
-    () => [
-      {
-        field: "id",
-        headerName: "ID",
-        minWidth: 260,
-        flex: 1,
-      },
-      {
-        field: EMAIL_FIELD,
-        headerName: EMAIL_LABEL,
-        minWidth: 220,
-        flex: 1,
-      },
-      {
-        field: "status",
-        headerName: "Status",
-        minWidth: 120,
-      },
-      {
-        field: "enabled",
-        headerName: "Enabled",
-        minWidth: 120,
-        renderCell: ({ value }) =>
+  const columns = React.useMemo(
+    () =>
+      createListColumns(
+        ({ value }) =>
           value ? <Chip color="success" label="Y" size="small" /> : <Chip color="default" label="N" size="small" />,
-      },
-      {
-        field: "roles",
-        headerName: "Roles",
-        minWidth: 240,
-        flex: 1,
-        valueGetter: (_, row) =>
-          Array.isArray(row?.roles) ? row.roles.join(", ") : "-",
-      },
-      {
-        field: "actions",
-        headerName: "Actions",
-        align: "right",
-        headerAlign: "right",
-        minWidth: 140,
-        sortable: false,
-        renderCell: ({ row }) => (
+        ({ row }) => (
           <>
             <EditButton hideText recordItemId={row.id} />
             <ShowButton hideText recordItemId={row.id} />
             <DeleteButton hideText recordItemId={row.id} />
           </>
         ),
-      },
-    ],
+      ),
     [],
   );
 
