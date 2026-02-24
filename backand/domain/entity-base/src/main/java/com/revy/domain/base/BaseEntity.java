@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,10 +17,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
+
 @ToString
+@Getter
+@NoArgsConstructor
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class})
 public class BaseEntity implements Serializable {
     @Id
     @Column(name = "id")
@@ -32,14 +35,10 @@ public class BaseEntity implements Serializable {
     @LastModifiedDate
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;
-
-
     @PrePersist
     void prePersist() {
         onPrePersist();
     }
-
-
     protected void onPrePersist() {
         if (id == null) {
             id = UuidUtils.getTimeOrderedEpochUuidV7();
