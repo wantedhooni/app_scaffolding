@@ -10,6 +10,7 @@
     "build": "refine build",
     "start": "refine start",
     "lint": "next lint",
+    "generate:grid-columns": "node scripts/generate-grid-columns.mjs",
     "refine": "refine",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",

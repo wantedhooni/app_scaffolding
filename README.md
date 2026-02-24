@@ -121,6 +121,17 @@ npm run build
 npm run test:e2e
 ```
 
+## Grid Column Codegen
+
+`ui-admin`에서는 JSON 모델로 `GridColDef[]` 초안을 생성할 수 있습니다.
+
+```bash
+cd frontend/ui-admin
+cat model.json | npm run generate:grid-columns
+```
+
+상세 사용법은 `docs/HELP.md`를 참고하세요.
+
 ## Template Docs
 
 `_dummy-page` 복사 후 도메인 생성 가이드:

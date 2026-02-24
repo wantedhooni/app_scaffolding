@@ -68,7 +68,7 @@ export default function DummyListTemplatePage() {
         keyword={keyword}
         onKeywordChange={setKeyword}
         onSearch={handleSearch}
-        onCreate={modal.show}
+        onCreate={() => {}}
         createVisible={false}
       />
       <DataGrid {...dataGridProps} columns={columns} autoHeight />

@@ -35,6 +35,19 @@ Refine's hooks and components simplifies the development process and eliminates 
     npm run start
 ```
 
+### Generate `GridColDef[]` from JSON model
+
+```bash
+    cat model.json | npm run generate:grid-columns
+```
+
+With options:
+
+```bash
+    npm run generate:grid-columns -- --input model.json --name USER_LIST_COLUMNS
+    npm run generate:grid-columns -- --input model.json --no-actions
+```
+
 ## Learn More
 
 To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)

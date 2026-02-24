@@ -95,3 +95,44 @@ npm run lint
 - 각 페이지 훅에 `meta: RESOURCE_META` 적용
 - `src/app/layout.tsx` resources 등록
 - `npx tsc --noEmit`, `npm run lint` 통과
+
+## 9. `generate:grid-columns` 사용법
+응답 JSON 모델로 `GridColDef[]` 초안을 생성할 수 있습니다.
+
+### 9.1 기본 실행
+```bash
+cd frontend/ui-admin
+cat model.json | npm run generate:grid-columns
+```
+
+### 9.2 파일 입력 + 상수명 지정
+```bash
+cd frontend/ui-admin
+npm run generate:grid-columns -- --input model.json --name USER_LIST_COLUMNS
+```
+
+### 9.3 actions 컬럼 제외
+```bash
+cd frontend/ui-admin
+npm run generate:grid-columns -- --input model.json --no-actions
+```
+
+### 9.4 입력 JSON 예시
+```json
+{
+  "id": "string",
+  "email": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "nickName": "string",
+  "status": "ACTIVE",
+  "permissions": ["string"],
+  "failCount": 0,
+  "enabled": true
+}
+```
+
+### 9.5 생성 결과 적용 위치
+- 생성된 코드를 도메인별 `constants.ts`에 붙여 넣고
+- `page.tsx`에서 `columns={...}`에 연결합니다.
+- `actions` 컬럼이 포함된 경우 `renderActions`를 페이지에서 주입해야 합니다.
