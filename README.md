@@ -1,7 +1,12 @@
 # Scaffolding Generic Web
 
-웹 어드민 프로젝트 모노레포입니다.
+## NOTE
+- 아무리 생각해도 ADMIN PORTAL에서 CRUD 빠르게 / 공통적으로 찍어낼 방법이 떠오르지 않는다.
+- 고전이기는 Generic CRUD Web 방식을 응용해서 작업 해보자.
+- GITHUB 템플릿용
 
+---
+웹 어드민 / API-SERVER 프로젝트 모노레포입니다.
 - `backand`: Spring Boot 멀티모듈 백엔드
 - `frontend/ui-admin`: Next.js + Refine 기반 어드민 UI
 - `infra/db`: 로컬 DB 도커 컴포즈
