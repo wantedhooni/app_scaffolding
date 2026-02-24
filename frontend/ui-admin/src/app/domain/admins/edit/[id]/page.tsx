@@ -11,6 +11,7 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
+import type { BaseRecord, HttpError } from "@refinedev/core";
 import { useList } from "@refinedev/core";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
@@ -26,6 +27,14 @@ import {
   ROLE_RESOURCE_META,
 } from "../../constants";
 
+type AdminUpdateFormValues = {
+  email?: string;
+  password?: string;
+  status?: "ACTIVE" | "WITHDRAWN";
+  enabled?: boolean;
+  roleIds?: string[];
+};
+
 export default function AdminEditPage() {
   const {
     saveButtonProps,
@@ -33,7 +42,7 @@ export default function AdminEditPage() {
     register,
     control,
     formState: { errors },
-  } = useForm({
+  } = useForm<BaseRecord, HttpError, AdminUpdateFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
       meta: RESOURCE_META,
@@ -55,7 +64,7 @@ export default function AdminEditPage() {
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Box component="form" sx={{ display: "flex", flexDirection: "column" }} autoComplete="off">
         <TextField
-          {...register(EMAIL_FIELD)}
+          {...register(EMAIL_FIELD, { setValueAs: (value: string) => value?.trim() || undefined })}
           error={!!(errors as any)?.[EMAIL_FIELD]}
           helperText={(errors as any)?.[EMAIL_FIELD]?.message}
           margin="normal"
@@ -65,7 +74,7 @@ export default function AdminEditPage() {
         />
 
         <TextField
-          {...register(PASSWORD_FIELD)}
+          {...register(PASSWORD_FIELD, { setValueAs: (value: string) => value || undefined })}
           error={!!(errors as any)?.[PASSWORD_FIELD]}
           helperText={(errors as any)?.[PASSWORD_FIELD]?.message}
           margin="normal"

@@ -1,8 +1,8 @@
 "use client";
 
-import { Stack, Typography } from "@mui/material";
 import { useShow } from "@refinedev/core";
-import { Show, TextFieldComponent as TextField } from "@refinedev/mui";
+import { Show } from "@refinedev/mui";
+import { LabelValueList } from "@components/label-value-list";
 import { CODE_FIELD, CODE_LABEL, DESCRIPTION_FIELD, DESCRIPTION_LABEL, RESOURCE, RESOURCE_META } from "../../constants";
 
 export default function PermissionShowPage() {
@@ -16,16 +16,15 @@ export default function PermissionShowPage() {
 
   return (
     <Show isLoading={isLoading}>
-      <Stack gap={1}>
-        <Typography variant="body1" fontWeight="bold">ID</Typography>
-        <TextField value={record?.id} />
-
-        <Typography variant="body1" fontWeight="bold">{CODE_LABEL}</Typography>
-        <TextField value={record?.[CODE_FIELD]} />
-
-        <Typography variant="body1" fontWeight="bold">{DESCRIPTION_LABEL}</Typography>
-        <TextField value={record?.[DESCRIPTION_FIELD]} />
-      </Stack>
+      <LabelValueList
+        items={[
+          { label: "ID", value: record?.id },
+          { label: CODE_LABEL, value: record?.[CODE_FIELD] },
+          { label: DESCRIPTION_LABEL, value: record?.[DESCRIPTION_FIELD] },
+          { label: "Created At", value: record?.createdAt },
+          { label: "Updated At", value: record?.updatedAt },
+        ]}
+      />
     </Show>
   );
 }

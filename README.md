@@ -109,7 +109,34 @@ npm run dev
 ## URLs
 
 - Frontend: `http://localhost:3000`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Admin Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- Service Swagger UI: `http://localhost:9090/swagger-ui/index.html`
+
+## Springdoc (OpenAPI) Export
+
+백엔드(`api-admin-server`, `api-service-server`) 실행 중 기준:
+
+- Admin OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Service OpenAPI JSON: `http://localhost:9090/v3/api-docs`
+- Admin OpenAPI YAML: `http://localhost:8080/v3/api-docs.yaml`
+- Service OpenAPI YAML: `http://localhost:9090/v3/api-docs.yaml`
+- Admin Swagger HTML: `docs/swagger-admin.html`
+- Service Swagger HTML: `docs/swagger-service.html`
+
+```bash
+# docs HTML을 브라우저에서 열기 (프로젝트 루트 기준)
+python3 -m http.server 18080
+# http://localhost:18080/docs/swagger-admin.html
+# http://localhost:18080/docs/swagger-service.html
+```
+
+```bash
+# 프로젝트 루트 기준
+curl -sS http://localhost:8080/v3/api-docs -o docs/openapi-admin.json
+curl -sS http://localhost:9090/v3/api-docs -o docs/openapi-service.json
+curl -sS http://localhost:8080/v3/api-docs.yaml -o docs/openapi-admin.yml
+curl -sS http://localhost:9090/v3/api-docs.yaml -o docs/openapi-service.yml
+```
 
 ## Backend Validation
 
@@ -156,15 +183,19 @@ cat model.json | npm run generate:grid-columns
 
 ## Documentation
 
+### front
 - [Frontend 도메인 템플릿 가이드](docs/HELP.md)
-- [Frontend AI 작업 방식](docs/agnets-frontend.md)
-- [할 일 메모](docs/TODO.md)
+
+### backend
+- [Admin Swagger HTML](docs/swagger-admin.html)
+- [Service Swagger HTML](docs/swagger-service.html)
+
+## Architecture Diagrams
 - [아키텍처 다이어그램 (PNG)](docs/architecture-overview.png)
 - [아키텍처 다이어그램 원본 (Mermaid)](docs/architecture-overview.mmd)
 - [요청 흐름 다이어그램 (PNG)](docs/request-flow.png)
 - [요청 흐름 다이어그램 원본 (Mermaid)](docs/request-flow.mmd)
 
-## Architecture Diagrams
 
 - 구조 다이어그램: `docs/architecture-overview.png`
 - 요청 흐름 다이어그램: `docs/request-flow.png`
@@ -249,3 +280,7 @@ sequenceDiagram
 ```bash
 docker compose -f ./infra/db/docker-compose.yml down -v
 ```
+
+## Frontend UI Admin Screenshots
+
+![frontend-ui-admin-slideshow-3s.gif](docs/frontend-ui-admin/frontend-ui-admin-slideshow-3s.gif)

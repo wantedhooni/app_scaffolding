@@ -1,9 +1,15 @@
 "use client";
 
 import { Box, TextField } from "@mui/material";
+import type { BaseRecord, HttpError } from "@refinedev/core";
 import { Create } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { DESCRIPTION_FIELD, DESCRIPTION_LABEL, NAME_FIELD, NAME_LABEL, RESOURCE, RESOURCE_META } from "../constants";
+
+type RoleCreateFormValues = {
+  name: string;
+  description?: string;
+};
 
 export default function RoleCreatePage() {
   const {
@@ -11,7 +17,7 @@ export default function RoleCreatePage() {
     refineCore: { formLoading },
     register,
     formState: { errors },
-  } = useForm({
+  } = useForm<BaseRecord, HttpError, RoleCreateFormValues>({
     refineCoreProps: {
       resource: RESOURCE,
       meta: RESOURCE_META,
@@ -22,7 +28,10 @@ export default function RoleCreatePage() {
     <Create isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Box component="form" sx={{ display: "flex", flexDirection: "column" }} autoComplete="off">
         <TextField
-          {...register(NAME_FIELD, { required: `${NAME_FIELD} is required` })}
+          {...register(NAME_FIELD, {
+            required: "Name is required",
+            setValueAs: (value: string) => value.trim(),
+          })}
           error={!!(errors as any)?.[NAME_FIELD]}
           helperText={(errors as any)?.[NAME_FIELD]?.message}
           margin="normal"
@@ -30,7 +39,9 @@ export default function RoleCreatePage() {
           label={NAME_LABEL}
         />
         <TextField
-          {...register(DESCRIPTION_FIELD)}
+          {...register(DESCRIPTION_FIELD, {
+            setValueAs: (value: string) => value?.trim() || undefined,
+          })}
           error={!!(errors as any)?.[DESCRIPTION_FIELD]}
           helperText={(errors as any)?.[DESCRIPTION_FIELD]?.message}
           margin="normal"
