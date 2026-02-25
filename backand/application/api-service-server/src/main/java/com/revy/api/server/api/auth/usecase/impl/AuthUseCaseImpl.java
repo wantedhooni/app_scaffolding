@@ -44,8 +44,7 @@ public class AuthUseCaseImpl implements AuthUseCase {
             throw new IllegalArgumentException("비활성화된 계정입니다.");
         }
 
-        var hashedPassword = passwordEncoder.encode(req.password());
-        if (!passwordEncoder.matches(hashedPassword, user.encodedPassword())) {
+        if (!passwordEncoder.matches(req.password(), user.encodedPassword())) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
