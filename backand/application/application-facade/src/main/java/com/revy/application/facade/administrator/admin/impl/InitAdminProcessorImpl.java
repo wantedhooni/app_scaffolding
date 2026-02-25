@@ -2,17 +2,15 @@ package com.revy.application.facade.administrator.admin.impl;
 
 
 import com.revy.application.facade.administrator.admin.InitAdminProcessor;
+import com.revy.common.domain.enums.admin.AdminStatus;
 import com.revy.domain.admin.Admin;
 import com.revy.domain.admin.AdminPermission;
 import com.revy.domain.admin.AdminRole;
-import com.revy.common.domain.enums.admin.AdminStatus;
 import com.revy.domain.admin.repository.AdminRepository;
 import com.revy.domain.admin.repository.PermissionRepository;
 import com.revy.domain.admin.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,17 +30,12 @@ public class InitAdminProcessorImpl implements InitAdminProcessor {
     private final AdminRepository adminRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.bootstrap.admin.email:sysadmin@system.dev}")
-    private String bootstrapAdminEmail;
 
-    @Value("${app.bootstrap.admin.password:qwer1234!}")
-    private String bootstrapAdminPassword;
 
     @Override
     @Transactional
-    public void initializeSecurityData() {
+    public void initializeSecurityData(String email, String hashedPassword) {
         List<AdminPermission> permissions = permissionRepository.saveAll(
                 DEFAULT_PERMISSION_CODES.stream().map(AdminPermission::new).toList()
         );
@@ -52,14 +45,13 @@ public class InitAdminProcessorImpl implements InitAdminProcessor {
         roleRepository.save(adminRole);
 
         Admin admin = Admin.create(
-                bootstrapAdminEmail,
-                passwordEncoder.encode(bootstrapAdminPassword),
+                email,
+                hashedPassword,
                 AdminStatus.ACTIVE,
                 true
         );
         admin.addRole(adminRole);
-        adminRepository.save(admin);
-
-        log.warn("bootstrap admin created: email={}, role={}", bootstrapAdminEmail, DEFAULT_ADMIN_ROLE_NAME);
+        admin =  adminRepository.save(admin);
+        log.warn("bootstrap admin created: email={}, role={}", admin.getEmail(), DEFAULT_ADMIN_ROLE_NAME);
     }
 }

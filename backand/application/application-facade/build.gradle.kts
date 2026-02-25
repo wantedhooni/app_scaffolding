@@ -16,9 +16,6 @@ configurations {
 dependencies {
     implementation(project(":common"))
     implementation(project(":domain:entity"))
-    implementation(project(":application:security:jwt"))
-
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 
