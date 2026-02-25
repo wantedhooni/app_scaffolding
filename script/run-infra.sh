@@ -1,2 +1,2 @@
-docker compose -f ./infra/db/docker-compose.yml up -d
+docker compose   --env-file=./.env -f ./infra/db/docker-compose.yml up -d
 

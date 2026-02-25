@@ -1,7 +1,7 @@
 services:
   mariadb:
     image: mariadb:11.4
-    container_name: web
+    container_name: "${PROJECT_NAME}_DB"
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: root
@@ -15,7 +15,8 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     volumes:
-      - generic_web:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
 
 volumes:
-  generic_web:
+  mariadb_data:
+    name: "${PROJECT_NAME}_mariadb_data"
