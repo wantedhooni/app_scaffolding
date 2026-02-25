@@ -5,7 +5,6 @@ import com.revy.api.admin.server.api.auth.payload.LoginPayload;
 import com.revy.api.admin.server.api.auth.payload.TokenReissuePayload;
 
 public interface AuthUseCase {
-    void createAdmin(SignupPayload.Req req);
 
     LoginPayload.Res login(LoginPayload.Req req);
 

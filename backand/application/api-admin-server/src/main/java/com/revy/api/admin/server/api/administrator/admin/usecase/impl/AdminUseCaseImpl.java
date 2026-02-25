@@ -7,6 +7,8 @@ import com.revy.application.facade.administrator.admin.AdminReader;
 import com.revy.application.facade.administrator.admin.dto.AdminReaderDto;
 import com.revy.common.web.api.response.ApiPageResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AdminUseCaseImpl implements AdminUseCase {
+    private final PasswordEncoder passwordEncoder;
     private final AdminProcessor adminProcessor;
     private final AdminReader adminReader;
 
@@ -31,22 +34,22 @@ public class AdminUseCaseImpl implements AdminUseCase {
     }
 
     @Override
-    public ApiPageResponse<AdminPayload.Res> getPage(int page, int size, String sortBy, String sortDirection,
+    public ApiPageResponse<AdminPayload.Res> getPage(int page,
+                                                     int size,
+                                                     String sortBy,
+                                                     String sortDirection,
                                                      String paramQuery) {
         AdminReaderDto.AdminPage result = adminReader.getPage(page, size, sortBy, sortDirection, paramQuery);
-        return ApiPageResponse.of(
-                result.content().stream().map(this::toResponse).toList(),
-                result.totalElements(),
-                result.page(),
-                result.size()
-        );
+        return ApiPageResponse.of(result.content().stream().map(this::toResponse).toList(), result.totalElements(),
+                                  result.page(), result.size());
     }
-
 
 
     @Override
     public AdminPayload.Res update(UUID adminId, AdminPayload.UpdateCommandReq req) {
-        adminProcessor.update(adminId, req.email(), req.password(), req.status(), req.enabled(), req.roleIds());
+        var hashedPassword = StringUtils.isBlank(req.password()) ? req.password() : passwordEncoder.encode(
+                req.password());
+        adminProcessor.update(adminId, req.email(), hashedPassword, req.status(), req.enabled(), req.roleIds());
         return get(adminId);
     }
 
@@ -57,15 +60,11 @@ public class AdminUseCaseImpl implements AdminUseCase {
     }
 
     private AdminPayload.Res toResponse(AdminReaderDto.AdminView admin) {
-        return new AdminPayload.Res(
-                admin.id().toString(),
-                admin.email(),
-                admin.status().name(),
-                admin.enabled(),
-                admin.roleIds().stream().map(UUID::toString).collect(java.util.stream.Collectors.toSet()),
-                admin.roleNames(),
-                admin.createdAt(),
-                admin.updatedAt()
-        );
+        return new AdminPayload.Res(admin.id().toString(), admin.email(), admin.status().name(), admin.enabled(),
+                                    admin.roleIds()
+                                         .stream()
+                                         .map(UUID::toString)
+                                         .collect(java.util.stream.Collectors.toSet()), admin.roleNames(),
+                                    admin.createdAt(), admin.updatedAt());
     }
 }
