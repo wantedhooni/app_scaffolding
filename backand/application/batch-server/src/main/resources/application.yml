@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: batch-server
+  profiles:
+    default: local
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: true
+  data:
+    redis:
+      lettuce:
+        pool:
+          enabled: false
+
+server:
+  port: 8090
+
+logging:
+  level:
+    root: INFO
+    com.revy.*: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

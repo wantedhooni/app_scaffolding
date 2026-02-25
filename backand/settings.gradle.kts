@@ -7,5 +7,6 @@ include(
     ":application:application-facade",
     ":application:security:jwt",
     ":application:api-admin-server",
-    ":application:api-service-server"
+    ":application:api-service-server",
+    ":application:batch-server"
 )
