@@ -67,6 +67,22 @@ JWT 인증 필터는 공통 모듈에서 추상화되어 있습니다.
 
 ## Quick Start
 
+### 통합 실행 스크립트
+
+```bash
+./script/all-start.sh
+./script/all-start.sh local
+./script/all-stop.sh
+./script/all-restart.sh dev
+```
+
+- `all-start.sh [profile]`: infra(DB), backend(api-admin-server, api-service-server), frontend(ui-admin)를 한 번에 실행
+- `all-stop.sh`: 통합 실행 스크립트로 띄운 backend, frontend, infra(DB)를 모두 종료
+- `all-restart.sh [profile]`: backend, frontend, infra(DB) 전체 재시작
+- `profile` 인자가 없으면 루트 `.env`의 `APP_PROFILE` 값을 사용하며, 없으면 `local`로 실행
+- 로그 파일: `logs/*.log`
+- PID 파일: `logs/pids/*.pid`
+
 ### 1) DB 실행
 
 ```bash

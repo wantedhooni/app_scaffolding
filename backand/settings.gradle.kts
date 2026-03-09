@@ -8,5 +8,5 @@ include(
     ":application:security:jwt",
     ":application:api-admin-server",
     ":application:api-service-server",
-    ":application:batch-server"
+    ":application:executor-server"
 )

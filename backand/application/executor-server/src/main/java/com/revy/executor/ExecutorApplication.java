@@ -1,4 +1,4 @@
-package com.revy.batch;
+package com.revy.executor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -13,11 +13,11 @@ import org.springframework.context.event.EventListener;
 @EntityScan(basePackages = "com.revy")
 @ConfigurationPropertiesScan
 @SpringBootApplication(scanBasePackages={"com.revy"})
-public class BatchApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(BatchApplication.class, args);
-    }
+class ExecutorApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(ExecutorApplication.class, args);
+    }
 
     @EventListener
     public void on(ApplicationStartedEvent event) {
