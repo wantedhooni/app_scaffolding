@@ -169,47 +169,6 @@ npm run build
 npm run test:e2e
 ```
 
-## AI Commit Message
-
-전역 Git `prepare-commit-msg` 훅에서 이 프로젝트의 AI 커밋 메시지 스크립트를 호출하도록 구성할 수 있습니다.
-
-### 1) 초기 설치
-
-- 전역 hooks 경로: `~/.git/hooks`
-- 전역 훅 파일: `~/.git/hooks/prepare-commit-msg`
-- 프로젝트 스크립트: `script/generate-commit-message.mjs`
-- 이 저장소 루트에는 별도 `package.json` 이 필요하지 않습니다.
-
-### 2) Ollama 설정
-
-쉘 환경변수 또는 루트 `.env`에 아래 값을 준비합니다.
-
-```bash
-export OLLAMA_HOST=http://127.0.0.1:11434
-export OLLAMA_MODEL=llama3.2
-```
-
-- `OLLAMA_HOST`는 선택값이며, 없으면 `http://127.0.0.1:11434`를 사용합니다.
-- `OLLAMA_MODEL`은 선택값이며, 없으면 `llama3.2`를 사용합니다.
-- Ollama 호출이 실패하면 fallback 메시지를 생성합니다.
-
-### 3) 사용
-
-```bash
-git add .
-git commit
-```
-
-- 전역 `prepare-commit-msg` 훅이 현재 저장소 루트를 확인한 뒤 `script/generate-commit-message.mjs`를 호출합니다.
-- staged diff 기준으로 AI가 커밋 메시지 1줄을 생성합니다.
-- 로컬 Ollama를 호출해 `conventional commits` 형식(`type(scope): summary`)으로 생성합니다.
-- `git commit -m "..."`처럼 직접 메시지를 넘기면 자동 생성은 건너뜁니다.
-
-관련 파일:
-
-- `script/generate-commit-message.mjs`
-- `~/.git/hooks/prepare-commit-msg`
-
 ## Frontend Notes
 
 - `npm run dev`는 `NEXT_PUBLIC_ENABLE_DEVTOOLS=true`로 실행됩니다.
