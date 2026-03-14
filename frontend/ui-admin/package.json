@@ -6,7 +6,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "cross-env NEXT_PUBLIC_ENABLE_DEVTOOLS=true NODE_OPTIONS=--max_old_space_size=4096 refine dev",
+    "dev": "sh -c 'PORT=${PORT:-3000} NEXT_PUBLIC_ENABLE_DEVTOOLS=${NEXT_PUBLIC_ENABLE_DEVTOOLS:-true} NODE_OPTIONS=--max_old_space_size=4096 exec refine dev'",
+    "dev:no-devtools": "sh -c 'PORT=${PORT:-3000} NEXT_PUBLIC_DISABLE_DEVTOOLS=true NEXT_PUBLIC_ENABLE_DEVTOOLS=false NODE_OPTIONS=--max_old_space_size=4096 exec refine dev --devtools=false'",
     "build": "refine build",
     "start": "refine start",
     "lint": "eslint .",

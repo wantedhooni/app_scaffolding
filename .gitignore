@@ -279,3 +279,6 @@ dist
 
 .tmp
 **/.tmp
+
+.next-e2e
+**/.next-e2e

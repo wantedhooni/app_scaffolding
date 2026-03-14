@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     private static final String SECURITY_SCHEME_NAME = "bearerAuth";
-    private static final String TITLE = "api-admin";
-    private static final String DESCRIPTION = "api-admin 명세서";
+    private static final String TITLE = "service-api";
+    private static final String DESCRIPTION = "service-api 명세서";
     private static final String INFO_VERSION = "v1";
 
     @Bean
