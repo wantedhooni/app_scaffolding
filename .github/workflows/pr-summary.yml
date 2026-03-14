@@ -34,25 +34,7 @@ jobs:
             echo "## Auto Summary"
             echo
             echo "### Change Summary"
-            python3 - <<'PY'
-            from pathlib import Path
-
-            files = [line.strip() for line in Path("changed_files.txt").read_text().splitlines() if line.strip()]
-            groups = []
-
-            if any(f.startswith("frontend/ui-web-service/") for f in files):
-                groups.append("- `ui-web-service` 관련 변경 포함")
-            if any(f.startswith("frontend/ui-admin/") for f in files):
-                groups.append("- `ui-admin` 관련 변경 포함")
-            if any(f.startswith("script/") for f in files):
-                groups.append("- 실행/테스트 스크립트 변경 포함")
-            if any(f.startswith(".github/workflows/") for f in files):
-                groups.append("- GitHub Actions 워크플로우 변경 포함")
-            if not groups:
-                groups.append("- 변경 파일을 기준으로 수동 요약이 필요합니다.")
-
-            print("\n".join(groups))
-            PY
+            python3 -c 'from pathlib import Path; files=[line.strip() for line in Path("changed_files.txt").read_text().splitlines() if line.strip()]; groups=[]; groups.append("- `ui-web-service` 관련 변경 포함") if any(f.startswith("frontend/ui-web-service/") for f in files) else None; groups.append("- `ui-admin` 관련 변경 포함") if any(f.startswith("frontend/ui-admin/") for f in files) else None; groups.append("- 실행/테스트 스크립트 변경 포함") if any(f.startswith("script/") for f in files) else None; groups.append("- GitHub Actions 워크플로우 변경 포함") if any(f.startswith(".github/workflows/") for f in files) else None; print("\n".join(groups or ["- 변경 파일을 기준으로 수동 요약이 필요합니다."]))'
             echo
             echo "### Validation"
             echo "- CI 결과를 확인해 필요한 항목을 보완해 주세요."
