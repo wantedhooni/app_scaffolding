@@ -7,6 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
 stop_process "ui-admin"
+stop_process "ui-web-service"
 stop_process "api-service-server"
 stop_process "api-admin-server"
 
