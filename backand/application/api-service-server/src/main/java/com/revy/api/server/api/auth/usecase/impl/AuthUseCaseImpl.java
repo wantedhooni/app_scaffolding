@@ -12,6 +12,7 @@ import com.revy.common.domain.enums.user.UserStatus;
 import com.revy.jwt.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +30,23 @@ public class AuthUseCaseImpl implements AuthUseCase {
 
     @Override
     public SignupPayload.Res signup(SignupPayload.Req req) {
-        // processor.createUser(req.email(), req.password());
-        return null;
+        String normalizedEmail = normalizeEmail(req.email());
+        userReader.getAuthUserByEmail(normalizedEmail).ifPresent(user -> {
+            throw new IllegalArgumentException("존재하는 계정입니다.");
+        });
+
+        String encodedPassword = passwordEncoder.encode(req.password());
+        String nickName = StringUtils.isNotBlank(req.nickName()) ? req.nickName() : extractNickname(req.email());
+
+        processor.signup(req.email(), encodedPassword, null, null, nickName);
+        return new SignupPayload.Res("회원가입이 완료되었습니다.");
     }
 
     @Override
     public LoginPayload.Res login(LoginPayload.Req req) {
+        String normalizedEmail = normalizeEmail(req.email());
 
-        UserReaderDto.AuthUser user = userReader.getAuthUserByEmail(req.email())
+        UserReaderDto.AuthUser user = userReader.getAuthUserByEmail(normalizedEmail)
                                                 .orElseThrow(
                                                         () -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
@@ -74,5 +84,16 @@ public class AuthUseCaseImpl implements AuthUseCase {
         return new TokenReissuePayload.Res("Bearer", accessToken, refreshToken);
     }
 
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+    private String extractNickname(String email) {
+        int separatorIndex = email.indexOf("@");
+        if (separatorIndex <= 0) {
+            return email;
+        }
+        return email.substring(0, separatorIndex);
+    }
 
 }
