@@ -12,7 +12,6 @@ import com.revy.common.domain.enums.user.UserStatus;
 import com.revy.jwt.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +35,9 @@ public class AuthUseCaseImpl implements AuthUseCase {
         });
 
         String encodedPassword = passwordEncoder.encode(req.password());
-        String nickName = StringUtils.isNotBlank(req.nickName()) ? req.nickName() : extractNickname(req.email());
+        String normalizedNickName = normalizeNickname(req.nickName());
 
-        processor.signup(req.email(), encodedPassword, null, null, nickName);
+        processor.signup(normalizedEmail, encodedPassword, null, null, normalizedNickName);
         return new SignupPayload.Res("회원가입이 완료되었습니다.");
     }
 
@@ -88,12 +87,8 @@ public class AuthUseCaseImpl implements AuthUseCase {
         return email.trim().toLowerCase();
     }
 
-    private String extractNickname(String email) {
-        int separatorIndex = email.indexOf("@");
-        if (separatorIndex <= 0) {
-            return email;
-        }
-        return email.substring(0, separatorIndex);
+    private String normalizeNickname(String nickName) {
+        return nickName.trim();
     }
 
 }

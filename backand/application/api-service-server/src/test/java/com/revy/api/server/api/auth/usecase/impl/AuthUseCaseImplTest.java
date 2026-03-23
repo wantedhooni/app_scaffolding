@@ -50,7 +50,7 @@ class AuthUseCaseImplTest {
 
     @Test
     void signupCreatesUserWithNormalizedEmail() {
-        SignupPayload.Req req = new SignupPayload.Req("  USER@Example.com ", "password123");
+        SignupPayload.Req req = new SignupPayload.Req("  USER@Example.com ", "password123", "  Revy User  ");
 
         when(userReader.getAuthUserByEmail("user@example.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
@@ -58,12 +58,12 @@ class AuthUseCaseImplTest {
         SignupPayload.Res response = authUseCase.signup(req);
 
         assertEquals("회원가입이 완료되었습니다.", response.message());
-        verify(processor).signup("user@example.com", "encoded-password", null, null, "user");
+        verify(processor).signup("user@example.com", "encoded-password", null, null, "Revy User");
     }
 
     @Test
     void signupRejectsDuplicateEmailBeforeEncoding() {
-        SignupPayload.Req req = new SignupPayload.Req("USER@example.com", "password123");
+        SignupPayload.Req req = new SignupPayload.Req("USER@example.com", "password123", "revy");
         UserReaderDto.AuthUser existingUser = new UserReaderDto.AuthUser(
                 UUID.randomUUID(),
                 "user@example.com",
@@ -79,7 +79,7 @@ class AuthUseCaseImplTest {
 
         assertEquals("존재하는 계정입니다.", error.getMessage());
         verify(passwordEncoder, never()).encode(anyString());
-        verify(processor, never()).signup(eq("user@example.com"), anyString(), eq(null), eq(null), eq("user"));
+        verify(processor, never()).signup(eq("user@example.com"), anyString(), eq(null), eq(null), eq("revy"));
     }
 
     @Test

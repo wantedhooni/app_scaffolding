@@ -14,7 +14,7 @@ public class SignupPayload {
             @NotBlank
             @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.")
             String password,
-
+            @NotBlank
             @Size(max = 20, message = "닉네임은 20자 이하여야 합니다.")
             String nickName
     ) {
