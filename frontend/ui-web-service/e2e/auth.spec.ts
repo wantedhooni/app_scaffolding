@@ -2,6 +2,14 @@ import { expect, test } from "@playwright/test";
 
 test("signup page submits and routes to signin", async ({ page }) => {
   await page.route("**/api/signup", async (route) => {
+    const payload = route.request().postDataJSON() as {
+      email: string;
+      password: string;
+      nickName: string;
+    };
+
+    expect(payload.nickName).toBe("revy");
+
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -16,6 +24,7 @@ test("signup page submits and routes to signin", async ({ page }) => {
 
   await page.goto("/signup");
   await page.getByLabel("Email").fill("user@example.com");
+  await page.getByLabel("Nickname").fill("revy");
   await page.getByLabel("Password").fill("password123");
   await page.getByRole("button", { name: "Signup" }).click();
 

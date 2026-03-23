@@ -27,6 +27,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const copy = CONTENT[mode];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickName, setNickName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [tokenPreview, setTokenPreview] = useState("");
@@ -40,12 +41,25 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setTokenPreview("");
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedNickName = nickName.trim();
+      if (!normalizedEmail || !password) {
+        throw new Error("이메일과 비밀번호를 입력해 주세요.");
+      }
+      if (mode === "signup" && !normalizedNickName) {
+        throw new Error("닉네임을 입력해 주세요.");
+      }
+
       const response = await fetch(copy.endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(
+          mode === "signup"
+            ? { email: normalizedEmail, password, nickName: normalizedNickName }
+            : { email: normalizedEmail, password },
+        ),
       });
 
       const payload = (await response.json()) as {
@@ -110,16 +124,33 @@ export function AuthForm({ mode }: { mode: Mode }) {
             autoComplete="email"
             onChange={(event) => setEmail(event.target.value)}
             placeholder="name@example.com"
+            required
             type="email"
             value={email}
           />
         </label>
+        {mode === "signup" ? (
+          <label>
+            Nickname
+            <input
+              autoComplete="nickname"
+              maxLength={20}
+              onChange={(event) => setNickName(event.target.value)}
+              placeholder="nickname"
+              required
+              type="text"
+              value={nickName}
+            />
+          </label>
+        ) : null}
         <label>
           Password
           <input
             autoComplete={mode === "signin" ? "current-password" : "new-password"}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="password"
+            minLength={mode === "signup" ? 8 : undefined}
+            required
             type="password"
             value={password}
           />

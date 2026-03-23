@@ -13,9 +13,13 @@ export type ApiResponse<T> = {
 export type SignupRequest = {
   email: string;
   password: string;
+  nickName: string;
 };
 
-export type SigninRequest = SignupRequest;
+export type SigninRequest = {
+  email: string;
+  password: string;
+};
 
 export type SignupResponse = {
   message?: string;
